@@ -22,6 +22,9 @@
 			let objBarreFranchissement = null
 			let objImageOr = null
 			let objOr = null
+			let objGarde1 = null
+			let objGarde2 = null
+			let objGarde3 = null
 
 			/*
 							" " = case vide (espace dans les guillemets)
@@ -64,6 +67,7 @@
 				initBarreFranchissement()
 				initOr()
 				initTableauJeu()
+				initGardes()
 
 				dessiner() // Dessiner une première fois
 				animer()
@@ -138,6 +142,23 @@
 				}
 			}
 
+			const initGardes = () => {
+				objGarde1 = new Object()
+				objGarde1.intPosXActuel = 10 * intLongueurCellule
+				objGarde1.intPosYActuel = 14 * intHauteurCellule
+				objGarde1.strCouleur = "red"
+
+				objGarde2 = new Object()
+				objGarde2.intPosXActuel = 10 * intLongueurCellule
+				objGarde2.intPosYActuel = 9 * intHauteurCellule
+				objGarde2.strCouleur = "green"
+
+				objGarde3 = new Object()
+				objGarde3.intPosXActuel = 10 * intLongueurCellule
+				objGarde3.intPosYActuel = 1 * intHauteurCellule
+				objGarde3.strCouleur = "purple"
+			}
+
 			const animer = () => {
 				// Requête pour le prochain cycle
 				objCycleAnimation = requestAnimationFrame(animer)
@@ -152,7 +173,9 @@
 				objC2D.clearRect(0, 0, objCanvas.width, objCanvas.height)
 			}
 
-			const mettreAJourAnimation = () => {}
+			const mettreAJourAnimation = () => {
+				if (objGarde1.intPosXActuel + 10) objGarde1.intPosXActuel -= 2
+			}
 
 			const arreterAnimation = () => {
 				if (objCycleAnimation != null) cancelAnimationFrame(objCycleAnimation)
@@ -166,6 +189,7 @@
 				dessinerBarreFranchissement()
 				dessinerOr()
 				dessinerLodeRunner()
+				dessinerGardes()
 			}
 
 			const dessinerFond = () => {
@@ -291,7 +315,7 @@
 			const dessinerLodeRunner = () => {
 				objC2D.save()
 				// Centre en bas
-				let intPosXActuel = 10 * intLongueurCellule - intLongueurCellule / 2
+				let intPosXActuel = 15 * intLongueurCellule - intLongueurCellule / 2
 				let intPosYActuel = 14 * intHauteurCellule
 
 				let intPosPlancherY = intPosYActuel + intHauteurCellule - 2
@@ -363,6 +387,110 @@
 				objC2D.lineTo(intPosCentreX, intPosPlancherY - 35)
 				objC2D.stroke()
 
+				objC2D.restore()
+			}
+
+			const dessinerGardes = () => {
+				objC2D.save()
+				let intPosXActuel = null
+				let intPosYActuel = null
+				let strCouleurGarde = ""
+
+				for (let i = 1; i <= 3; i++) {
+					if (i == 1) {
+						strCouleurGarde = objGarde1.strCouleur
+						intPosXActuel = objGarde1.intPosXActuel
+						intPosYActuel = objGarde1.intPosYActuel
+					} else if (i == 2) {
+						strCouleurGarde = objGarde2.strCouleur
+						intPosXActuel = objGarde2.intPosXActuel
+						intPosYActuel = objGarde2.intPosYActuel
+					} else {
+						strCouleurGarde = objGarde3.strCouleur
+						intPosXActuel = objGarde3.intPosXActuel
+						intPosYActuel = objGarde3.intPosYActuel
+					}
+
+					intPosPlancherY = intPosYActuel + intHauteurCellule - 2
+					intPosCentreX = intPosXActuel + intLongueurCellule / 2
+
+					// Dessiner a partir du base au centre de la cellule
+					objC2D.strokeStyle = "white"
+					// pied droit
+					objC2D.beginPath()
+					objC2D.lineWidth = 6
+					objC2D.moveTo(intPosCentreX + 3, intPosPlancherY)
+					objC2D.lineTo(intPosCentreX + 3, intPosPlancherY - 7)
+					objC2D.stroke()
+					// jambe droite
+					objC2D.beginPath()
+					objC2D.lineWidth = 3
+					objC2D.moveTo(intPosCentreX + 1.5, intPosPlancherY - 7)
+					objC2D.lineTo(intPosCentreX + 1.5, intPosPlancherY - 11)
+					objC2D.stroke()
+					// fesse
+					objC2D.strokeStyle = "white"
+					objC2D.beginPath()
+					objC2D.lineWidth = 7
+					objC2D.moveTo(intPosCentreX - 7 / 2, intPosPlancherY - 8)
+					objC2D.lineTo(intPosCentreX - 7 / 2, intPosPlancherY - 16)
+					objC2D.stroke()
+					// corps
+					objC2D.strokeStyle = strCouleurGarde
+					objC2D.beginPath()
+					objC2D.lineWidth = 7
+					objC2D.moveTo(intPosCentreX - 7 / 2, intPosPlancherY - 16)
+					objC2D.lineTo(intPosCentreX - 7 / 2, intPosPlancherY - 20)
+					objC2D.stroke()
+					objC2D.strokeStyle = "white"
+					// jambe droite
+					objC2D.beginPath()
+					objC2D.lineWidth = 4
+					objC2D.moveTo(intPosCentreX - 4, intPosPlancherY - 6)
+					objC2D.lineTo(intPosCentreX - 15, intPosPlancherY - 6)
+					objC2D.stroke()
+					objC2D.strokeStyle = strCouleurGarde
+					// epaule droite
+					objC2D.beginPath()
+					objC2D.lineWidth = 3
+					objC2D.moveTo(intPosCentreX - 4, intPosPlancherY - 21.5)
+					objC2D.lineTo(intPosCentreX + 6, intPosPlancherY - 21.5)
+					objC2D.stroke()
+					// bras droite
+					objC2D.beginPath()
+					objC2D.moveTo(intPosCentreX + 6, intPosPlancherY - 18.5)
+					objC2D.lineTo(intPosCentreX + 11, intPosPlancherY - 18.5)
+					objC2D.stroke()
+					// cou
+					objC2D.beginPath()
+					objC2D.moveTo(intPosCentreX + 1, intPosPlancherY - 24.5)
+					objC2D.lineTo(intPosCentreX - 7, intPosPlancherY - 24.5)
+					objC2D.stroke()
+					// epaule gauche
+					objC2D.beginPath()
+					objC2D.moveTo(intPosCentreX - 7, intPosPlancherY - 21.5)
+					objC2D.lineTo(intPosCentreX - 12, intPosPlancherY - 21.5)
+					objC2D.stroke()
+					// bras gauche
+					objC2D.beginPath()
+					objC2D.moveTo(intPosCentreX - 10, intPosPlancherY - 18.5)
+					objC2D.lineTo(intPosCentreX - 15, intPosPlancherY - 18.5)
+					objC2D.stroke()
+					objC2D.strokeStyle = "BurlyWood"
+					// tete
+					objC2D.beginPath()
+					objC2D.lineWidth = 8
+					objC2D.moveTo(intPosCentreX, intPosPlancherY - 26)
+					objC2D.lineTo(intPosCentreX, intPosPlancherY - 32)
+					objC2D.stroke()
+					// chapeau
+					objC2D.beginPath()
+					objC2D.strokeStyle = "cyan"
+					objC2D.lineWidth = 4
+					objC2D.moveTo(intPosCentreX, intPosPlancherY - 32)
+					objC2D.lineTo(intPosCentreX, intPosPlancherY - 35)
+					objC2D.stroke()
+				}
 				objC2D.restore()
 			}
 		</script>
