@@ -22,11 +22,10 @@
 			let objBarreFranchissement = null
 			let objImageOr = null
 			let objOr = null
-			let objGarde1 = null
-			let objGarde2 = null
-			let objGarde3 = null
 
-			let objLodeRunner = null;
+			const intVitesse = 2
+
+			let objLodeRunner = null
 
 			/*
 							" " = case vide (espace dans les guillemets)
@@ -144,23 +143,6 @@
 				}
 			}
 
-			const initGardes = () => {
-				objGarde1 = new Object()
-				objGarde1.intPosXActuel = 10 * intLongueurCellule
-				objGarde1.intPosYActuel = 14 * intHauteurCellule
-				objGarde1.strCouleur = "red"
-
-				objGarde2 = new Object()
-				objGarde2.intPosXActuel = 10 * intLongueurCellule
-				objGarde2.intPosYActuel = 9 * intHauteurCellule
-				objGarde2.strCouleur = "green"
-
-				objGarde3 = new Object()
-				objGarde3.intPosXActuel = 10 * intLongueurCellule
-				objGarde3.intPosYActuel = 1 * intHauteurCellule
-				objGarde3.strCouleur = "purple"
-			}
-
 			const animer = () => {
 				// Requête pour le prochain cycle
 				objCycleAnimation = requestAnimationFrame(animer)
@@ -176,7 +158,7 @@
 			}
 
 			const mettreAJourAnimation = () => {
-				mettreAJourAnimationLoneRunner();
+				mettreAJourAnimationLoneRunner()
 			}
 
 			const arreterAnimation = () => {
@@ -191,7 +173,6 @@
 				dessinerBarreFranchissement()
 				dessinerOr()
 				dessinerLodeRunner()
-				dessinerGardes()
 			}
 
 			const dessinerFond = () => {
@@ -315,109 +296,124 @@
 			}
 
 			const initObjLodeRunner = () => {
-				objLodeRunner = new Object();
-				objLodeRunner.intPosXActuel = (10 * intLongueurCellule - intLongueurCellule / 2) + intLongueurCellule / 2;
-				objLodeRunner.intPosYActuel = (14 * intHauteurCellule) + intHauteurCellule - 2;
-				objLodeRunner.intVitesse = 0;
-				objLodeRunner.intScaleX = 1;
+				objLodeRunner = new Object()
+				objLodeRunner.intPosXActuel =
+					10 * intLongueurCellule - intLongueurCellule / 2 + intLongueurCellule / 2
+				objLodeRunner.intPosYActuel = 14 * intHauteurCellule + intHauteurCellule - 2
+				objLodeRunner.intVitesse = intVitesse
+				objLodeRunner.intScaleX = 1
+				objLodeRunner.binMovDroite = false
+				objLodeRunner.binMovGauche = false
 			}
 
 			const dessinerLodeRunner = () => {
 				objC2D.save()
-				objC2D.translate(objLodeRunner.intPosXActuel, objLodeRunner.intPosYActuel);
-				objC2D.scale(objLodeRunner.intScaleX, 1);
+				objC2D.translate(objLodeRunner.intPosXActuel, objLodeRunner.intPosYActuel)
+				objC2D.scale(objLodeRunner.intScaleX, 1)
 
 				objC2D.strokeStyle = "white"
 				// pied droit
 				objC2D.beginPath()
 				objC2D.lineWidth = 6
 				objC2D.moveTo(3, 0)
-				objC2D.lineTo(3,- 7)
+				objC2D.lineTo(3, -7)
 				objC2D.stroke()
 				// jambe droite
 				objC2D.beginPath()
 				objC2D.lineWidth = 3
-				objC2D.moveTo(1.5,- 7)
-				objC2D.lineTo(1.5,- 11)
+				objC2D.moveTo(1.5, -7)
+				objC2D.lineTo(1.5, -11)
 				objC2D.stroke()
 				// corps
 				objC2D.beginPath()
 				objC2D.lineWidth = 7
-				objC2D.moveTo(- 7 / 2,- 8)
-				objC2D.lineTo(- 7 / 2,- 20)
+				objC2D.moveTo(-7 / 2, -8)
+				objC2D.lineTo(-7 / 2, -20)
 				objC2D.stroke()
 				// jambe droite
 				objC2D.beginPath()
 				objC2D.lineWidth = 4
-				objC2D.moveTo(- 4,- 6)
-				objC2D.lineTo(- 15,- 6)
+				objC2D.moveTo(-4, -6)
+				objC2D.lineTo(-15, -6)
 				objC2D.stroke()
 				// epaule droite
 				objC2D.beginPath()
 				objC2D.lineWidth = 3
-				objC2D.moveTo(- 4,- 21.5)
-				objC2D.lineTo(6,- 21.5)
+				objC2D.moveTo(-4, -21.5)
+				objC2D.lineTo(6, -21.5)
 				objC2D.stroke()
 				// bras droite
 				objC2D.beginPath()
-				objC2D.moveTo(6,- 18.5)
-				objC2D.lineTo(11,- 18.5)
+				objC2D.moveTo(6, -18.5)
+				objC2D.lineTo(11, -18.5)
 				objC2D.stroke()
 				// cou
 				objC2D.beginPath()
-				objC2D.moveTo(1,- 24.5)
-				objC2D.lineTo(- 7,- 24.5)
+				objC2D.moveTo(1, -24.5)
+				objC2D.lineTo(-7, -24.5)
 				objC2D.stroke()
 				// epaule gauche
 				objC2D.beginPath()
-				objC2D.moveTo(- 7,- 21.5)
-				objC2D.lineTo(- 12,- 21.5)
+				objC2D.moveTo(-7, -21.5)
+				objC2D.lineTo(-12, -21.5)
 				objC2D.stroke()
 				// bras gauche
 				objC2D.beginPath()
-				objC2D.moveTo(- 10,- 18.5)
-				objC2D.lineTo(- 15,- 18.5)
+				objC2D.moveTo(-10, -18.5)
+				objC2D.lineTo(-15, -18.5)
 				objC2D.stroke()
 				// tete
 				objC2D.beginPath()
 				objC2D.lineWidth = 8
-				objC2D.moveTo(0,- 26)
-				objC2D.lineTo(0,- 32)
+				objC2D.moveTo(0, -26)
+				objC2D.lineTo(0, -32)
 				objC2D.stroke()
 				// chapeau
 				objC2D.beginPath()
 				objC2D.strokeStyle = "cyan"
 				objC2D.lineWidth = 4
-				objC2D.moveTo(0,- 32)
-				objC2D.lineTo(0,- 35)
+				objC2D.moveTo(0, -32)
+				objC2D.lineTo(0, -35)
 				objC2D.stroke()
 
 				objC2D.restore()
 			}
 
 			function mettreAJourAnimationLoneRunner() {
-				objLodeRunner.intPosXActuel += objLodeRunner.intVitesse;
+				if (binGauche) {
+					objLodeRunner.intPosXActuel += objLodeRunner.intVitesse
+					objLodeRunner.intScaleX = 1
+				} else if (binDroite) {
+					objLodeRunner.intPosXActuel -= objLodeRunner.intVitesse
+					objLodeRunner.intScaleX = -1
+				}
 			}
 
-			const mouvementLoneRunner = ()=>{
-				switch (event.keyCode){
+			const mouvementLoneRunner = () => {
+				switch (event.keyCode) {
 					case 39:
-						objLodeRunner.intVitesse =1;
-						objLodeRunner.intVitesse *= objLodeRunner.intVitesse > 0 ? 1 : -1;
-						objLodeRunner.intScaleX = 1;
-						break;
+						binGauche = true
+						binDroite = false
+
+						break
 					case 37:
-						objLodeRunner.intVitesse =1;
-						objLodeRunner.intVitesse *= objLodeRunner.intVitesse > 0 ? -1 : 1;
-						objLodeRunner.intScaleX = -1;
-						break;
+						binDroite = true
+						binGauche = false
+						break
 				}
 			}
 		</script>
 	</head>
 	<body onload="initAnimation()">
 		<main class="sLargeurDiv sCorps">
-			<canvas id="monCanvas" width="1400" height="680" tabIndex="1" onkeydown="mouvementLoneRunner();" onkeyup="objLodeRunner.intVitesse = 0">
+			<canvas
+				id="monCanvas"
+				width="1400"
+				height="680"
+				tabindex="1"
+				onkeydown="mouvementLoneRunner();"
+				onkeyup="binGauche = false; binDroite = false"
+			>
 				Votre navigateur ne supporte pas la balise canvas
 			</canvas>
 		</main>
