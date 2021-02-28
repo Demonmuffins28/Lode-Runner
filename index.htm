@@ -1,0 +1,269 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="description" content="Lode Runner" />
+		<title>Lode Runner par Marc-Olivier Lalonde</title>
+		<link rel="stylesheet" type="text/css" href="StyleLabo5.css" />
+		<link rel="javascript" href="echelle.js" />
+
+		<!-- Code JavaScript local -->
+		<script type="text/javascript">
+			let objCanvas = null
+			let objC2D = null
+			let objCycleAnimation = null
+			let intHauteurCellule = null
+			let intLongueurCellule = null
+
+			let objBrique = null
+			let objEchelle = null
+			let objBarreFranchissement = null
+
+			/*
+							" " = case vide (espace dans les guillemets)
+							"o" = or
+							"b" = brique
+							"e" = echelle
+							"f" = barre de franchissement
+							"p" = plancher gris
+						*/
+			// prettier-ignore
+			let tTableauDeJeu = [
+																	[" "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],
+																	[" "," "," "," ","o"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],
+																	["b","b","b","b","b","b","b","e","b","b","b","b","b","b","b"," "," "," "," "," "," "," "," "," "," "," "," "," "],
+																	[" "," "," "," "," "," "," ","e","f","f","f","f","f","f","f","f","f","f"," "," "," "," "," ","o"," "," "," "," "],
+																	[" "," "," "," "," "," "," ","e"," "," "," "," ","b","b","e"," "," "," ","b","b","b","b","b","b","b","e","b","b"],
+																	[" "," "," "," "," "," "," ","e"," "," "," "," ","b","b","e"," "," "," "," "," "," "," "," "," "," ","e"," "," "],
+																	[" "," "," "," "," "," "," ","e"," "," "," "," ","b","b","e"," "," "," "," "," "," "," ","o"," "," ","e"," "," "],
+																	["b","b","e","b","b","b","b","b"," "," "," "," ","b","b","b","b","b","b","b","b","e","b","b","b","b","b","b","b"],
+																	[" "," ","e"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","e"," "," "," "," "," "," "," "],
+																	[" "," ","e"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","e"," "," "," "," "," "," "," "],
+																	["b","b","b","b","b","b","b","b","b","e","b","b","b","b","b","b","b","b","b","b","e"," "," "," "," "," "," "," "],
+																	[" "," "," "," "," "," "," "," "," ","e"," "," "," "," "," "," "," "," "," "," ","e"," "," "," "," "," "," "," "],
+																	[" "," "," "," "," "," "," ","o"," ","e","f","f","f","f","f","f","f","f","f","f","e"," "," "," ","o"," "," "," "],
+																	[" "," "," "," ","e","b","b","b","b","b","b"," "," "," "," "," "," "," "," "," ","b","b","b","b","b","b","b","e"],
+																	[" "," "," "," ","e"," "," "," "," "," "," "," "," "," "," "," "," "," ","o"," "," "," "," "," "," "," "," ","e"],
+																	["b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b"],
+																	["p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p"]
+																]
+
+			const initAnimation = () => {
+				objCanvas = document.getElementById("monCanvas")
+				objCanvas.focus()
+				objC2D = objCanvas.getContext("2d")
+				intLongueurCellule = objCanvas.width / 28
+				intHauteurCellule = objCanvas.height / 17
+				initFond()
+				initBrique()
+				initEchelle()
+				initBarreFranchissement()
+				initTableauJeu()
+				dessiner() // Dessiner une première fois
+				animer()
+			}
+
+			const initFond = () => {
+				objFond = new Object()
+				objFond.strCouleur = "black"
+			}
+
+			const initBrique = () => {
+				objBrique = new Object()
+				objBrique.tPos = []
+				objBrique.strCouleurBrique = "red"
+				objBrique.strCouleurCiment = "gray"
+			}
+
+			const initEchelle = () => {
+				// 50 x 40
+				objEchelle = new Object()
+				objEchelle.tPos = []
+				objEchelle.strCouleur = "orange"
+			}
+
+			const initBarreFranchissement = () => {
+				objBarreFranchissement = new Object()
+				objBarreFranchissement.tPos = []
+				objBarreFranchissement.strCouleur = "orange"
+			}
+
+			const initTableauJeu = () => {
+				// intit chaque objet for ij loop pour push position dans chaque objetfixe.
+				for (let i = 0; i < tTableauDeJeu.length; i++) {
+					for (let j = 0; j < tTableauDeJeu[i].length; j++) {
+						switch (tTableauDeJeu[i][j]) {
+							case "b":
+								objBrique.tPos.push({
+									x: j * intLongueurCellule,
+									y: i * intHauteurCellule,
+								})
+								break
+							case "e":
+								objEchelle.tPos.push({
+									x: j * intLongueurCellule,
+									y: i * intHauteurCellule,
+								})
+								break
+							case "f":
+								objBarreFranchissement.tPos.push({
+									x: j * intLongueurCellule,
+									y: i * intHauteurCellule,
+								})
+								break
+							case "o":
+								break
+							default:
+								break
+						}
+					}
+				}
+				console.table(objBrique.tPos)
+				console.table(objEchelle.tPos)
+				console.table(objBarreFranchissement.tPos)
+			}
+
+			const animer = () => {
+				// Requête pour le prochain cycle
+				objCycleAnimation = requestAnimationFrame(animer)
+
+				// Le cycle d'animation
+				effacerDessin()
+				mettreAJourAnimation()
+				dessiner()
+			}
+
+			const effacerDessin = () => {
+				objC2D.clearRect(0, 0, objCanvas.width, objCanvas.height)
+			}
+
+			const mettreAJourAnimation = () => {}
+
+			const arreterAnimation = () => {
+				if (objCycleAnimation != null) cancelAnimationFrame(objCycleAnimation)
+				objCycleAnimation = null
+			}
+
+			const dessiner = () => {
+				dessinerFond()
+				dessinerBrique()
+				dessinerEchelle()
+				dessinerBarreFranchissement()
+			}
+
+			const dessinerFond = () => {
+				objC2D.save()
+				objC2D.beginPath()
+				objC2D.fillStyle = objFond.strCouleur
+				objC2D.rect(0, 0, objCanvas.width, objCanvas.height)
+				objC2D.fill()
+				objC2D.restore()
+			}
+
+			const dessinerBrique = () => {
+				objC2D.save()
+				for (let index = 0; index < objBrique.tPos.length; index++) {
+					let intPosXActuel = objBrique.tPos[index].x
+					let intPosYActuel = objBrique.tPos[index].y
+
+					objC2D.fillStyle = "red"
+					objC2D.beginPath()
+					objC2D.rect(intPosXActuel, intPosYActuel, intLongueurCellule, intHauteurCellule)
+					objC2D.fill()
+
+					objC2D.strokeStyle = "gray"
+					objC2D.lineWidth = 3
+					objC2D.beginPath()
+					objC2D.moveTo(intPosXActuel, intPosYActuel)
+					objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel)
+					objC2D.moveTo(intPosXActuel, intPosYActuel + intHauteurCellule)
+					objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + intHauteurCellule)
+					objC2D.moveTo(intPosXActuel + intLongueurCellule / 3, intPosYActuel + intHauteurCellule)
+					objC2D.lineTo(
+						intPosXActuel + intLongueurCellule / 3,
+						intPosYActuel + intHauteurCellule / 2
+					)
+					objC2D.moveTo(intPosXActuel + (2 * intLongueurCellule) / 3, intPosYActuel)
+					objC2D.lineTo(
+						intPosXActuel + (2 * intLongueurCellule) / 3,
+						intPosYActuel + intHauteurCellule / 2
+					)
+					objC2D.stroke()
+
+					objC2D.strokeStyle = "gray"
+					objC2D.lineWidth = 5
+					objC2D.beginPath()
+					objC2D.moveTo(intPosXActuel, intPosYActuel + intHauteurCellule / 2)
+					objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + intHauteurCellule / 2)
+					objC2D.stroke()
+				}
+				objC2D.restore()
+			}
+
+			const dessinerEchelle = () => {
+				objC2D.save()
+				for (let index = 0; index < objEchelle.tPos.length; index++) {
+					let intPosXActuel = objEchelle.tPos[index].x
+					let intPosYActuel = objEchelle.tPos[index].y
+
+					objC2D.strokeStyle = objEchelle.strCouleur
+					objC2D.lineWidth = 5
+					objC2D.beginPath()
+					// bareau de gauche
+					objC2D.moveTo(intPosXActuel + 2.5, intPosYActuel - 1.5)
+					objC2D.lineTo(intPosXActuel + 2.5, intPosYActuel + intHauteurCellule - 1.5)
+					objC2D.stroke()
+					// bareau de droite
+					objC2D.moveTo(intPosXActuel + intLongueurCellule - 2.5, intPosYActuel - 1.5)
+					objC2D.lineTo(
+						intPosXActuel + intLongueurCellule - 2.5,
+						intPosYActuel + intHauteurCellule - 1.5
+					)
+					objC2D.stroke()
+					objC2D.lineWidth = 2
+					// bareau du haut et les autres en dessous
+					objC2D.moveTo(intPosXActuel, intPosYActuel + 2)
+					objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + 2)
+					objC2D.moveTo(intPosXActuel, intPosYActuel + 12)
+					objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + 12)
+					objC2D.moveTo(intPosXActuel, intPosYActuel + 22)
+					objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + 22)
+					objC2D.moveTo(intPosXActuel, intPosYActuel + 32)
+					objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + 32)
+					objC2D.stroke()
+				}
+				let intPosXActuel = objEchelle.tPos[0].x
+				let intPosYActuel = objEchelle.tPos[0].y
+
+				objC2D.restore()
+			}
+
+			const dessinerBarreFranchissement = () => {
+				objC2D.save()
+				//objBarreFranchissement.tPos.push({ x: 50, y: 0 })
+				for (let index = 0; index < objBarreFranchissement.tPos.length; index++) {
+					let intPosXActuel = objBarreFranchissement.tPos[index].x
+					let intPosYActuel = objBarreFranchissement.tPos[index].y
+
+					objC2D.strokeStyle = objBarreFranchissement.strCouleur
+					objC2D.lineWidth = 2
+					objC2D.beginPath()
+					objC2D.moveTo(intPosXActuel, intPosYActuel + 10)
+					objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + 10)
+					objC2D.stroke()
+					objC2D.restore()
+				}
+			}
+
+			const dessinerOr = () => {}
+		</script>
+	</head>
+	<body onload="initAnimation()">
+		<main class="sLargeurDiv sCorps">
+			<canvas id="monCanvas" width="1400" height="680">
+				Votre navigateur ne supporte pas la balise canvas
+			</canvas>
+		</main>
+	</body>
+</html>
