@@ -22,6 +22,9 @@
 			let objBarreFranchissement = null
 			let objImageOr = null
 			let objOr = null
+			let objGarde1 = null
+			let objGarde2 = null
+			let objGarde3 = null
 
 			let objLodeRunner = null;
 
@@ -141,6 +144,23 @@
 				}
 			}
 
+			const initGardes = () => {
+				objGarde1 = new Object()
+				objGarde1.intPosXActuel = 10 * intLongueurCellule
+				objGarde1.intPosYActuel = 14 * intHauteurCellule
+				objGarde1.strCouleur = "red"
+
+				objGarde2 = new Object()
+				objGarde2.intPosXActuel = 10 * intLongueurCellule
+				objGarde2.intPosYActuel = 9 * intHauteurCellule
+				objGarde2.strCouleur = "green"
+
+				objGarde3 = new Object()
+				objGarde3.intPosXActuel = 10 * intLongueurCellule
+				objGarde3.intPosYActuel = 1 * intHauteurCellule
+				objGarde3.strCouleur = "purple"
+			}
+
 			const animer = () => {
 				// Requête pour le prochain cycle
 				objCycleAnimation = requestAnimationFrame(animer)
@@ -171,6 +191,7 @@
 				dessinerBarreFranchissement()
 				dessinerOr()
 				dessinerLodeRunner()
+				dessinerGardes()
 			}
 
 			const dessinerFond = () => {
