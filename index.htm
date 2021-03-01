@@ -380,10 +380,10 @@
 			}
 
 			function mettreAJourAnimationLoneRunner() {
-				if (objLodeRunner.binMovGauche) {
+				if (objLodeRunner.binMovGauche && objLodeRunner.intPosXActuel <= objCanvas.width-15) {
 					objLodeRunner.intPosXActuel += objLodeRunner.intVitesse
 					objLodeRunner.intScaleX = 1
-				} else if (objLodeRunner.binMovDroite) {
+				} else if (objLodeRunner.binMovDroite && objLodeRunner.intPosXActuel >= 15) {
 					objLodeRunner.intPosXActuel -= objLodeRunner.intVitesse
 					objLodeRunner.intScaleX = -1
 				}
@@ -402,6 +402,16 @@
 						break
 				}
 			}
+			const arreterMouvementLodeRunner = () =>{
+				switch (event.keyCode) {
+					case 39:
+						objLodeRunner.binMovGauche = false;
+						break
+					case 37:
+						objLodeRunner.binMovDroite = false;
+						break
+				}
+			}
 		</script>
 	</head>
 	<body onload="initAnimation()">
@@ -412,7 +422,7 @@
 				height="680"
 				tabindex="1"
 				onkeydown="mouvementLoneRunner();"
-				onkeyup="objLodeRunner.binMovGauche = false; objLodeRunner.binMovDroite = false"
+				onkeyup="arreterMouvementLodeRunner()"
 			>
 				Votre navigateur ne supporte pas la balise canvas
 			</canvas>
