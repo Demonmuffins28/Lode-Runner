@@ -384,11 +384,43 @@
 
 			function mettreAJourAnimationLodeRunner() {
 				if (objLodeRunner.binMovGauche && objLodeRunner.intPosXActuel <= objCanvas.width-15) {
-					objLodeRunner.intPosXActuel += objLodeRunner.intVitesse
 					objLodeRunner.intScaleX = 1
+					if (objLodeRunner.binSurEchelle){
+						let binCollision = false;
+						for (i = 0; i < objBrique.tPos.length; i++){
+							if (((objLodeRunner.intPosXActuel + intLongueurCellule/2)  >= objBrique.tPos[i].x && (objLodeRunner.intPosXActuel + intLongueurCellule/2) <= (objBrique.tPos[i].x + intLongueurCellule)) 
+							&&  ((objLodeRunner.intPosYActuel <= (objBrique.tPos[i].y + intHauteurCellule)  && objLodeRunner.intPosYActuel >= objBrique.tPos[i].y)
+							||  ((objLodeRunner.intPosYActuel - intHauteurCellule) <= (objBrique.tPos[i].y + intHauteurCellule)  && (objLodeRunner.intPosYActuel - intHauteurCellule) >= objBrique.tPos[i].y)))
+							{
+								binCollision = true;
+							}
+						}
+						if (!binCollision){
+							objLodeRunner.intPosXActuel += objLodeRunner.intVitesse
+						}
+					}
+					else {
+						objLodeRunner.intPosXActuel += objLodeRunner.intVitesse
+					}
 				} else if (objLodeRunner.binMovDroite && objLodeRunner.intPosXActuel >= 15) {
-					objLodeRunner.intPosXActuel -= objLodeRunner.intVitesse
 					objLodeRunner.intScaleX = -1
+					if (objLodeRunner.binSurEchelle){
+						let binCollision = false;
+						for (i = 0; i < objBrique.tPos.length; i++){
+							if (((objLodeRunner.intPosXActuel - intLongueurCellule/2)  >= objBrique.tPos[i].x && (objLodeRunner.intPosXActuel - intLongueurCellule/2) <= (objBrique.tPos[i].x + intLongueurCellule)) 
+							&&  ((objLodeRunner.intPosYActuel <= (objBrique.tPos[i].y + intHauteurCellule)  && objLodeRunner.intPosYActuel >= objBrique.tPos[i].y)
+							||  ((objLodeRunner.intPosYActuel - intHauteurCellule) <= (objBrique.tPos[i].y + intHauteurCellule)  && (objLodeRunner.intPosYActuel - intHauteurCellule) >= objBrique.tPos[i].y)))
+							{
+								binCollision = true;
+							}
+						}
+						if (!binCollision){
+							objLodeRunner.intPosXActuel -= objLodeRunner.intVitesse
+						}
+					}
+					else {
+						objLodeRunner.intPosXActuel -= objLodeRunner.intVitesse
+					}
 				}
 				else if (objLodeRunner.binMovHaut){
 					objLodeRunner.binSurEchelle = false;
