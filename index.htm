@@ -390,14 +390,13 @@
 						for (i = 0; i < objBrique.tPos.length && !binCollision; i++){
 							if (((objLodeRunner.intPosXActuel + intLongueurCellule/2)  >= objBrique.tPos[i].x && (objLodeRunner.intPosXActuel + intLongueurCellule/2) <= (objBrique.tPos[i].x + intLongueurCellule)) 
 							&&  ((objLodeRunner.intPosYActuel <= (objBrique.tPos[i].y + intHauteurCellule)  && objLodeRunner.intPosYActuel >= objBrique.tPos[i].y)
-							||  ((objLodeRunner.intPosYActuel - intHauteurCellule) <= (objBrique.tPos[i].y + intHauteurCellule)  && (objLodeRunner.intPosYActuel - intHauteurCellule) >= objBrique.tPos[i].y)))
+							||  ((objLodeRunner.intPosYActuel - intHauteurCellule) < (objBrique.tPos[i].y + intHauteurCellule)  && (objLodeRunner.intPosYActuel - intHauteurCellule) > objBrique.tPos[i].y)))
 							{
 								binCollision = true;
 							}
 						}
 						if (!binCollision){
-							objLodeRunner.intPosXActuel += intLongueurCellule/2;
-							objLodeRunner.binSurEchelle = false;
+							objLodeRunner.intPosXActuel += objLodeRunner.intVitesse
 						}
 					}
 					else {
@@ -416,8 +415,8 @@
 							}
 						}
 						if (!binCollision){
-							objLodeRunner.intPosXActuel -= intLongueurCellule/2;
-							objLodeRunner.binSurEchelle = false;						}
+							objLodeRunner.intPosXActuel -= objLodeRunner.intVitesse;
+						}
 					}
 					else {
 						objLodeRunner.intPosXActuel -= objLodeRunner.intVitesse
