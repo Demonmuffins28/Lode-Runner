@@ -387,7 +387,7 @@
 					objLodeRunner.intScaleX = 1
 					if (objLodeRunner.binSurEchelle){
 						let binCollision = false;
-						for (i = 0; i < objBrique.tPos.length; i++){
+						for (i = 0; i < objBrique.tPos.length && !binCollision; i++){
 							if (((objLodeRunner.intPosXActuel + intLongueurCellule/2)  >= objBrique.tPos[i].x && (objLodeRunner.intPosXActuel + intLongueurCellule/2) <= (objBrique.tPos[i].x + intLongueurCellule)) 
 							&&  ((objLodeRunner.intPosYActuel <= (objBrique.tPos[i].y + intHauteurCellule)  && objLodeRunner.intPosYActuel >= objBrique.tPos[i].y)
 							||  ((objLodeRunner.intPosYActuel - intHauteurCellule) <= (objBrique.tPos[i].y + intHauteurCellule)  && (objLodeRunner.intPosYActuel - intHauteurCellule) >= objBrique.tPos[i].y)))
@@ -396,7 +396,8 @@
 							}
 						}
 						if (!binCollision){
-							objLodeRunner.intPosXActuel += objLodeRunner.intVitesse
+							objLodeRunner.intPosXActuel += intLongueurCellule/2;
+							objLodeRunner.binSurEchelle = false;
 						}
 					}
 					else {
@@ -406,7 +407,7 @@
 					objLodeRunner.intScaleX = -1
 					if (objLodeRunner.binSurEchelle){
 						let binCollision = false;
-						for (i = 0; i < objBrique.tPos.length; i++){
+						for (i = 0; i < objBrique.tPos.length && !binCollision; i++){
 							if (((objLodeRunner.intPosXActuel - intLongueurCellule/2)  >= objBrique.tPos[i].x && (objLodeRunner.intPosXActuel - intLongueurCellule/2) <= (objBrique.tPos[i].x + intLongueurCellule)) 
 							&&  ((objLodeRunner.intPosYActuel <= (objBrique.tPos[i].y + intHauteurCellule)  && objLodeRunner.intPosYActuel >= objBrique.tPos[i].y)
 							||  ((objLodeRunner.intPosYActuel - intHauteurCellule) <= (objBrique.tPos[i].y + intHauteurCellule)  && (objLodeRunner.intPosYActuel - intHauteurCellule) >= objBrique.tPos[i].y)))
@@ -415,8 +416,8 @@
 							}
 						}
 						if (!binCollision){
-							objLodeRunner.intPosXActuel -= objLodeRunner.intVitesse
-						}
+							objLodeRunner.intPosXActuel -= intLongueurCellule/2;
+							objLodeRunner.binSurEchelle = false;						}
 					}
 					else {
 						objLodeRunner.intPosXActuel -= objLodeRunner.intVitesse
