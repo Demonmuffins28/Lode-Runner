@@ -24,7 +24,7 @@
 		let objImageOr = null
 		let objOr = null
 
-		const intVitesse = 2
+		const intVitesse = 3
 
 		let objLodeRunner = null
 
@@ -307,6 +307,7 @@
 			objLodeRunner.binMovGauche = false
 			objLodeRunner.binMovHaut = false
 			objLodeRunner.binMovBas = false
+			objLodeRunner.binSurEchelle = false;
 			objLodeRunner.objetAutour = {};
 		}
 
@@ -348,6 +349,16 @@
 					strType: tTableauDeJeu[intY + 1][intX - 1],
 					intX: (intX - 1) * intLongueurCellule,
 					intY: (intY + 1) * intHauteurCellule
+				},
+				objEnHautAGauche: {
+					strType: tTableauDeJeu[intY - 1][intX + 1],
+					intX: (intX + 1) * intLongueurCellule,
+					intY: (intY - 1) * intHauteurCellule
+				},
+				objEnHautADroite: {
+					strType: tTableauDeJeu[intY - 1][intX - 1],
+					intX: (intX - 1) * intLongueurCellule,
+					intY: (intY - 1) * intHauteurCellule
 				}
 			};
 		}
@@ -427,32 +438,63 @@
 
 		function mettreAJourAnimationLodeRunner() {
 			touverObjetAutourLodeRunner();
-			if (objLodeRunner.binMovGauche && objLodeRunner.intPosXActuel <= objCanvas.width - 15) {
+			//chute
+			if (((objLodeRunner.objetAutour.objAPosLodeRunner.strType == " " || objLodeRunner.objetAutour.objAPosLodeRunner.strType == "f") &&
+				objLodeRunner.intPosYActuel < (objLodeRunner.objetAutour.objEnBas.intY - objLodeRunner.intVitesse)
+				|| (objLodeRunner.objetAutour.objEnBas.strType == " " || objLodeRunner.objetAutour.objEnBas.strType == "f")) 
+				&& ((objLodeRunner.intPosXActuel - 15 > objLodeRunner.objetAutour.objAPosLodeRunner.intX && objLodeRunner.intScaleX == 1) 
+				|| (objLodeRunner.intPosXActuel + 15 < objLodeRunner.objetAutour.objAPosLodeRunner.intX + intLongueurCellule && objLodeRunner.intScaleX == -1))) 
+			{
+				objLodeRunner.intPosYActuel += objLodeRunner.intVitesse;
+				objLodeRunner.binMovDroite = false
+				objLodeRunner.binMovGauche = false
+				objLodeRunner.binMovHaut = false
+				objLodeRunner.binMovBas = false
+			}
+
+			if (objLodeRunner.binMovGauche && objLodeRunner.intPosXActuel <= objCanvas.width - 15 &&
+			 !(objLodeRunner.objetAutour.objAGauche.strType == "b" && 
+			 (objLodeRunner.intPosXActuel + (intLongueurCellule/2)) == objLodeRunner.objetAutour.objAGauche.intX)) 
+			{
 				objLodeRunner.intScaleX = 1
-				objLodeRunner.intPosXActuel += objLodeRunner.intVitesse
-			} else if (objLodeRunner.binMovDroite && objLodeRunner.intPosXActuel >= 15) {
+				if (!(objLodeRunner.binSurEchelle == true &&  objLodeRunner.objetAutour.objEnHautAGauche.strType == "b")){
+					objLodeRunner.intPosXActuel += objLodeRunner.intVitesse
+					objLodeRunner.binSurEchelle = false;
+				}
+			} 
+			else if (objLodeRunner.binMovDroite && objLodeRunner.intPosXActuel >= 15 
+			&& !(objLodeRunner.objetAutour.objADroite.strType == "b" && 
+			(objLodeRunner.intPosXActuel - (intLongueurCellule/2) < objLodeRunner.objetAutour.objADroite.intX + intLongueurCellule))) 
+			{
 				objLodeRunner.intScaleX = -1
-				objLodeRunner.intPosXActuel -= objLodeRunner.intVitesse;
+				if (!(objLodeRunner.binSurEchelle == true &&  objLodeRunner.objetAutour.objEnHautADroite.strType == "b")){
+					objLodeRunner.intPosXActuel -= objLodeRunner.intVitesse;
+					objLodeRunner.binSurEchelle = false;
+				}
 			}
 			else if (objLodeRunner.binMovHaut) {
 				if (objLodeRunner.objetAutour.objAPosLodeRunner.strType == "e") {
 					objLodeRunner.intPosXActuel = objLodeRunner.objetAutour.objAPosLodeRunner.intX + (intLongueurCellule / 2)
 					objLodeRunner.intPosYActuel -= objLodeRunner.intVitesse;
+					objLodeRunner.binSurEchelle = true;
+				}
+				else {
+					objLodeRunner.binSurEchelle = false;
 				}
 			}
 			else if (objLodeRunner.binMovBas) {
 				if (((objLodeRunner.objetAutour.objAPosLodeRunner.strType == "e" &&
 					(objLodeRunner.objetAutour.objEnBas.strType == "b" &&
 						objLodeRunner.intPosYActuel < (objLodeRunner.objetAutour.objEnBas.intY - objLodeRunner.intVitesse))) ||
-					objLodeRunner.objetAutour.objEnBas.strType == "e")) {
+					objLodeRunner.objetAutour.objEnBas.strType == "e")) 
+				{
 					objLodeRunner.intPosXActuel = objLodeRunner.objetAutour.objAPosLodeRunner.intX + (intLongueurCellule / 2)
 					objLodeRunner.intPosYActuel += objLodeRunner.intVitesse;
+					objLodeRunner.binSurEchelle = true;
 				}
-			}
-			if (objLodeRunner.objetAutour.objAPosLodeRunner.strType == " " &&
-				objLodeRunner.intPosYActuel < (objLodeRunner.objetAutour.objEnBas.intY - objLodeRunner.intVitesse)
-				|| objLodeRunner.objetAutour.objEnBas.strType == " ") {
-				objLodeRunner.intPosYActuel += objLodeRunner.intVitesse;
+				else{
+					objLodeRunner.binSurEchelle = false;
+				}
 			}
 		}
 
