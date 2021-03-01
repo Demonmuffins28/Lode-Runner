@@ -158,7 +158,7 @@
 			}
 
 			const mettreAJourAnimation = () => {
-				mettreAJourAnimationLoneRunner()
+				mettreAJourAnimationLodeRunner()
 			}
 
 			const arreterAnimation = () => {
@@ -300,17 +300,20 @@
 				objLodeRunner.intPosXActuel =
 					10 * intLongueurCellule - intLongueurCellule / 2 + intLongueurCellule / 2
 				objLodeRunner.intPosYActuel = 14 * intHauteurCellule + intHauteurCellule - 2
-				objLodeRunner.intVitesse = intVitesse
+				objLodeRunner.intVitesse = intVitesse;
 				objLodeRunner.intScaleX = 1
 				objLodeRunner.binMovDroite = false
 				objLodeRunner.binMovGauche = false
+				objLodeRunner.binMovHaut = false
+				objLodeRunner.binMovBas = false 
+				objLodeRunner.binSurEchelle = false;
 			}
 
 			const dessinerLodeRunner = () => {
 				objC2D.save()
 				objC2D.translate(objLodeRunner.intPosXActuel, objLodeRunner.intPosYActuel)
 				objC2D.scale(objLodeRunner.intScaleX, 1)
-
+				
 				objC2D.strokeStyle = "white"
 				// pied droit
 				objC2D.beginPath()
@@ -379,7 +382,7 @@
 				objC2D.restore()
 			}
 
-			function mettreAJourAnimationLoneRunner() {
+			function mettreAJourAnimationLodeRunner() {
 				if (objLodeRunner.binMovGauche && objLodeRunner.intPosXActuel <= objCanvas.width-15) {
 					objLodeRunner.intPosXActuel += objLodeRunner.intVitesse
 					objLodeRunner.intScaleX = 1
@@ -387,28 +390,63 @@
 					objLodeRunner.intPosXActuel -= objLodeRunner.intVitesse
 					objLodeRunner.intScaleX = -1
 				}
+				else if (objLodeRunner.binMovHaut){
+					objLodeRunner.binSurEchelle = false;
+					for (i = 0; i < objEchelle.tPos.length && !objLodeRunner.binSurEchelle; i++){
+						if ((objLodeRunner.intPosXActuel >= objEchelle.tPos[i].x && objLodeRunner.intPosXActuel <= (objEchelle.tPos[i].x + intLongueurCellule)) 
+						&&  (objLodeRunner.intPosYActuel <= (objEchelle.tPos[i].y + intHauteurCellule)  && objLodeRunner.intPosYActuel >= objEchelle.tPos[i].y))
+						{
+							objLodeRunner.intPosXActuel = (objEchelle.tPos[i].x + intLongueurCellule/2)
+							objLodeRunner.intPosYActuel -= objLodeRunner.intVitesse;
+							objLodeRunner.binSurEchelle = true;
+						}
+					}
+				}
+				else if (objLodeRunner.binMovBas){
+					objLodeRunner.binSurEchelle = false;
+					for (i = 0; i < objEchelle.tPos.length && !objLodeRunner.binSurEchelle; i++){
+						if ((objLodeRunner.intPosXActuel >= objEchelle.tPos[i].x && objLodeRunner.intPosXActuel <= (objEchelle.tPos[i].x + intLongueurCellule)) 
+						&&  ((objLodeRunner.intPosYActuel < (objEchelle.tPos[i].y + intHauteurCellule - objLodeRunner.intVitesse)  && objLodeRunner.intPosYActuel > objEchelle.tPos[i].y) 
+							|| objLodeRunner.intPosYActuel <= objEchelle.tPos[i].y && objLodeRunner.intPosYActuel >= objEchelle.tPos[i].y - objLodeRunner.intVitesse))
+						{
+							objLodeRunner.intPosXActuel = (objEchelle.tPos[i].x + intLongueurCellule/2)
+							objLodeRunner.intPosYActuel += objLodeRunner.intVitesse;
+							objLodeRunner.binSurEchelle = true;
+						}
+					}
+				}
+				console.log(objLodeRunner.binSurEchelle);
 			}
 
-			const mouvementLoneRunner = () => {
+			const mouvementLodeRunner = () => {
 				switch (event.keyCode) {
 					case 39:
 						objLodeRunner.binMovGauche = true
-						objLodeRunner.binMovDroite = false
-
 						break
 					case 37:
 						objLodeRunner.binMovDroite = true
-						objLodeRunner.binMovGauche = false
+						break
+					case 38:
+						objLodeRunner.binMovHaut = true
+						break
+					case 40:
+						objLodeRunner.binMovBas = true
 						break
 				}
 			}
 			const arreterMouvementLodeRunner = () =>{
 				switch (event.keyCode) {
 					case 39:
-						objLodeRunner.binMovGauche = false;
+						objLodeRunner.binMovGauche = false
 						break
 					case 37:
-						objLodeRunner.binMovDroite = false;
+						objLodeRunner.binMovDroite = false
+						break
+					case 38:
+						objLodeRunner.binMovHaut = false
+						break
+					case 40:
+						objLodeRunner.binMovBas = false
 						break
 				}
 			}
@@ -421,7 +459,7 @@
 				width="1400"
 				height="680"
 				tabindex="1"
-				onkeydown="mouvementLoneRunner();"
+				onkeydown="mouvementLodeRunner();"
 				onkeyup="arreterMouvementLodeRunner()"
 			>
 				Votre navigateur ne supporte pas la balise canvas
