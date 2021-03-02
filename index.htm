@@ -23,9 +23,14 @@
 			let objImageOr = null
 			let objOr = null
 
+			let objGarde1 = null
+			let objGarde2 = null
+			let objGarde3 = null
+			let objLodeRunner = null
+
 			const intVitesse = 2
 
-			let objLodeRunner = null
+			let binEnMouvement = false
 
 			/*
 							" " = case vide (espace dans les guillemets)
@@ -69,6 +74,10 @@
 				initOr()
 				initTableauJeu()
 				initObjLodeRunner()
+				initGardes()
+
+				//console.log(objGarde1.intPosYActuel)
+				//console.table(objBrique.tPos)
 
 				dessiner() // Dessiner une première fois
 				animer()
@@ -143,6 +152,26 @@
 				}
 			}
 
+			const initGardes = () => {
+				objGarde1 = new Object()
+				objGarde1.intPosXActuel = 7 * intLongueurCellule
+				objGarde1.intPosYActuel = 12 * intHauteurCellule
+				objGarde1.strCouleur = "red"
+				objGarde1.intVitesse = intVitesse * 0.8
+
+				objGarde2 = new Object()
+				objGarde2.intPosXActuel = 10 * intLongueurCellule
+				objGarde2.intPosYActuel = 9 * intHauteurCellule
+				objGarde2.strCouleur = "green"
+				objGarde2.intVitesse = intVitesse * 0.8
+
+				objGarde3 = new Object()
+				objGarde3.intPosXActuel = 10 * intLongueurCellule
+				objGarde3.intPosYActuel = 1 * intHauteurCellule
+				objGarde3.strCouleur = "purple"
+				objGarde3.intVitesse = intVitesse * 0.8
+			}
+
 			const animer = () => {
 				// Requête pour le prochain cycle
 				objCycleAnimation = requestAnimationFrame(animer)
@@ -159,6 +188,7 @@
 
 			const mettreAJourAnimation = () => {
 				mettreAJourAnimationLoneRunner()
+				if (objGarde1.intPosXActuel + 10) mouvementGarde()
 			}
 
 			const arreterAnimation = () => {
@@ -173,6 +203,7 @@
 				dessinerBarreFranchissement()
 				dessinerOr()
 				dessinerLodeRunner()
+				dessinerGardes()
 			}
 
 			const dessinerFond = () => {
@@ -298,7 +329,7 @@
 			const initObjLodeRunner = () => {
 				objLodeRunner = new Object()
 				objLodeRunner.intPosXActuel =
-					10 * intLongueurCellule - intLongueurCellule / 2 + intLongueurCellule / 2
+					15 * intLongueurCellule - intLongueurCellule / 2 + intLongueurCellule / 2
 				objLodeRunner.intPosYActuel = 14 * intHauteurCellule + intHauteurCellule - 2
 				objLodeRunner.intVitesse = intVitesse
 				objLodeRunner.intScaleX = 1
@@ -379,6 +410,114 @@
 				objC2D.restore()
 			}
 
+			const dessinerGardes = () => {
+				objC2D.save()
+				let intPosXActuel = null
+				let intPosYActuel = null
+				let strCouleurGarde = ""
+
+				for (let i = 1; i <= 3; i++) {
+					if (i == 1) {
+						strCouleurGarde = objGarde1.strCouleur
+						intPosXActuel = objGarde1.intPosXActuel
+						intPosYActuel = objGarde1.intPosYActuel
+					} else if (i == 2) {
+						strCouleurGarde = objGarde2.strCouleur
+						intPosXActuel = objGarde2.intPosXActuel
+						intPosYActuel = objGarde2.intPosYActuel
+					} else {
+						strCouleurGarde = objGarde3.strCouleur
+						intPosXActuel = objGarde3.intPosXActuel
+						intPosYActuel = objGarde3.intPosYActuel
+					}
+
+					intPosPlancherY = intPosYActuel + intHauteurCellule - 2
+					intPosCentreX = intPosXActuel + intLongueurCellule / 2
+
+					objC2D.beginPath()
+					objC2D.rect(intPosXActuel, intPosYActuel, intLongueurCellule, intHauteurCellule)
+					objC2D.stroke()
+
+					// Dessiner a partir du base au centre de la cellule
+					objC2D.strokeStyle = "white"
+					// pied droit
+					objC2D.beginPath()
+					objC2D.lineWidth = 6
+					objC2D.moveTo(intPosCentreX + 3, intPosPlancherY)
+					objC2D.lineTo(intPosCentreX + 3, intPosPlancherY - 7)
+					objC2D.stroke()
+					// jambe droite
+					objC2D.beginPath()
+					objC2D.lineWidth = 3
+					objC2D.moveTo(intPosCentreX + 1.5, intPosPlancherY - 7)
+					objC2D.lineTo(intPosCentreX + 1.5, intPosPlancherY - 11)
+					objC2D.stroke()
+					// fesse
+					objC2D.strokeStyle = "white"
+					objC2D.beginPath()
+					objC2D.lineWidth = 7
+					objC2D.moveTo(intPosCentreX - 7 / 2, intPosPlancherY - 8)
+					objC2D.lineTo(intPosCentreX - 7 / 2, intPosPlancherY - 16)
+					objC2D.stroke()
+					// corps
+					objC2D.strokeStyle = strCouleurGarde
+					objC2D.beginPath()
+					objC2D.lineWidth = 7
+					objC2D.moveTo(intPosCentreX - 7 / 2, intPosPlancherY - 16)
+					objC2D.lineTo(intPosCentreX - 7 / 2, intPosPlancherY - 20)
+					objC2D.stroke()
+					objC2D.strokeStyle = "white"
+					// jambe droite
+					objC2D.beginPath()
+					objC2D.lineWidth = 4
+					objC2D.moveTo(intPosCentreX - 4, intPosPlancherY - 6)
+					objC2D.lineTo(intPosCentreX - 15, intPosPlancherY - 6)
+					objC2D.stroke()
+					objC2D.strokeStyle = strCouleurGarde
+					// epaule droite
+					objC2D.beginPath()
+					objC2D.lineWidth = 3
+					objC2D.moveTo(intPosCentreX - 4, intPosPlancherY - 21.5)
+					objC2D.lineTo(intPosCentreX + 6, intPosPlancherY - 21.5)
+					objC2D.stroke()
+					// bras droite
+					objC2D.beginPath()
+					objC2D.moveTo(intPosCentreX + 6, intPosPlancherY - 18.5)
+					objC2D.lineTo(intPosCentreX + 11, intPosPlancherY - 18.5)
+					objC2D.stroke()
+					// cou
+					objC2D.beginPath()
+					objC2D.moveTo(intPosCentreX + 1, intPosPlancherY - 24.5)
+					objC2D.lineTo(intPosCentreX - 7, intPosPlancherY - 24.5)
+					objC2D.stroke()
+					// epaule gauche
+					objC2D.beginPath()
+					objC2D.moveTo(intPosCentreX - 7, intPosPlancherY - 21.5)
+					objC2D.lineTo(intPosCentreX - 12, intPosPlancherY - 21.5)
+					objC2D.stroke()
+					// bras gauche
+					objC2D.beginPath()
+					objC2D.moveTo(intPosCentreX - 10, intPosPlancherY - 18.5)
+					objC2D.lineTo(intPosCentreX - 15, intPosPlancherY - 18.5)
+					objC2D.stroke()
+					objC2D.strokeStyle = "BurlyWood"
+					// tete
+					objC2D.beginPath()
+					objC2D.lineWidth = 8
+					objC2D.moveTo(intPosCentreX, intPosPlancherY - 26)
+					objC2D.lineTo(intPosCentreX, intPosPlancherY - 32)
+					objC2D.stroke()
+					// chapeau
+					objC2D.beginPath()
+					objC2D.strokeStyle = "cyan"
+					objC2D.lineWidth = 4
+					objC2D.moveTo(intPosCentreX, intPosPlancherY - 32)
+					objC2D.lineTo(intPosCentreX, intPosPlancherY - 35)
+					objC2D.stroke()
+				}
+				objC2D.restore()
+			}
+
 			function mettreAJourAnimationLoneRunner() {
 				if (objLodeRunner.binMovGauche) {
 					objLodeRunner.intPosXActuel += objLodeRunner.intVitesse
@@ -402,6 +541,87 @@
 						break
 				}
 			}
+
+			const mouvementGarde = () => {
+				// if (objLodeRunner.intPosYActuel == objGarde1.intPosYActuel + intHauteurCellule - 2) {
+				// 	if (objLodeRunner.intPosXActuel - (objGarde1.intPosXActuel + 50) > 0) {
+				// 		objGarde1.intPosXActuel += objGarde1.intVitesse
+				// 	} else if (objLodeRunner.intPosXActuel - objGarde1.intPosXActuel < 0)
+				// 		objGarde1.intPosXActuel -= objGarde1.intVitesse
+				// }
+				// if (
+				// 	objLodeRunner.intPosXActuel - objGarde1.intPosXActuel <= 50 &&
+				// 	objLodeRunner.intPosXActuel - objGarde1.intPosXActuel >= 0
+				// ) {
+				// 	console.log("Game Over")
+				// }
+
+				// Verifier si une brique est en dessous de lui
+				const binTombe = verifierSiVaTomber(
+					objGarde1.intPosXActuel,
+					objGarde1.intPosYActuel,
+					binEnMouvement
+				)
+				if (binTombe) {
+					binEnMouvement = faireTomber(objGarde1.intPosXActuel, objGarde1.intPosYActuel)
+				}
+				if (!binTombe) objGarde1.intPosXActuel += objGarde1.intVitesse
+			}
+
+			function faireTomber(intPosXGarde, intPosYGarde) {
+				let binMouv = false
+				if (intPosXGarde < 550) objGarde1.intPosXActuel += objGarde1.intVitesse
+				else if (Math.round(intPosXGarde) == 550) {
+					for (let i = 0; i < objBrique.tPos.length; i++) {
+						if (
+							objBrique.tPos[i].x == Math.round(intPosXGarde) &&
+							objBrique.tPos[i].y - intHauteurCellule > intPosYGarde
+						) {
+							objGarde1.intPosYActuel += objGarde1.intVitesse
+						} else if (
+							objBrique.tPos[i].x == Math.round(intPosXGarde) &&
+							objBrique.tPos[i].y - intHauteurCellule == Math.round(intPosYGarde)
+						)
+							binMouv = true
+					}
+				}
+				return binMouv
+			}
+
+			function verifierSiVaTomber(intPosXGarde, intPosYGarde, binEnMouvement) {
+				let binTombe = false
+				if (binEnMouvement) {
+					for (let i = 0; i < objBrique.tPos.length; i++) {
+						if (intPosYGarde == objBrique.tPos[i].y - intHauteurCellule) {
+							if (
+								intPosXGarde - (intLongueurCellule / 2 - 1) - objBrique.tPos[i].x <=
+									intLongueurCellule &&
+								intPosXGarde - (intLongueurCellule / 2 - 1) - objBrique.tPos[i].x >= 0
+							) {
+								if (objBrique.tPos[i].x + intLongueurCellule != objBrique.tPos[i + 1].x) {
+									binTombe = true
+								}
+							}
+
+							if (
+								intPosXGarde +
+									(2 * intLongueurCellule - (intLongueurCellule / 2 - 1)) -
+									objBrique.tPos[i].x <=
+									intLongueurCellule &&
+								intPosXGarde +
+									(2 * intLongueurCellule - (intLongueurCellule / 2 - 1)) -
+									objBrique.tPos[i].x >=
+									0
+							) {
+								if (objBrique.tPos[i].x - intLongueurCellule != objBrique.tPos[i - 1].x) {
+									binTombe = true
+								}
+							}
+						}
+					}
+				} else binTombe = true
+				return binTombe
+			}
 		</script>
 	</head>
 	<body onload="initAnimation()">
@@ -411,7 +631,7 @@
 				width="1400"
 				height="680"
 				tabindex="1"
-				onkeydown="mouvementLoneRunner();"
+				onkeydown="mouvementLoneRunner(); return false"
 				onkeyup="objLodeRunner.binMovGauche = false; objLodeRunner.binMovDroite = false"
 			>
 				Votre navigateur ne supporte pas la balise canvas
