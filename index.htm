@@ -24,7 +24,7 @@
 		let objImageOr = null
 		let objOr = null
 
-		const intVitesse = 3
+		const intVitesse = 2.5
 
 		let objLodeRunner = null
 
@@ -298,9 +298,9 @@
 
 		const initObjLodeRunner = () => {
 			objLodeRunner = new Object()
-			objLodeRunner.intPosXActuel =
-				10 * intLongueurCellule - intLongueurCellule / 2 + intLongueurCellule / 2
-			objLodeRunner.intPosYActuel = 14 * intHauteurCellule + intHauteurCellule - 2
+			objLodeRunner.intHauteurParRapportSol = 2.5;
+			objLodeRunner.intPosXActuel = 10 * intLongueurCellule - intLongueurCellule / 2 + intLongueurCellule / 2
+			objLodeRunner.intPosYActuel = 14 * intHauteurCellule + intHauteurCellule - objLodeRunner.intHauteurParRapportSol;
 			objLodeRunner.intVitesse = intVitesse;
 			objLodeRunner.intScaleX = 1
 			objLodeRunner.binMovDroite = false
@@ -308,6 +308,8 @@
 			objLodeRunner.binMovHaut = false
 			objLodeRunner.binMovBas = false
 			objLodeRunner.binSurEchelle = false;
+			objLodeRunner.binSurBarre = false;
+			objLodeRunner.binEnChute = false;
 			objLodeRunner.objetAutour = {};
 		}
 
@@ -435,39 +437,54 @@
 
 			objC2D.restore()
 		}
-
 		function mettreAJourAnimationLodeRunner() {
 			touverObjetAutourLodeRunner();
 			//chute
-			if (((objLodeRunner.objetAutour.objAPosLodeRunner.strType == " " || objLodeRunner.objetAutour.objAPosLodeRunner.strType == "f") &&
-				objLodeRunner.intPosYActuel < (objLodeRunner.objetAutour.objEnBas.intY - objLodeRunner.intVitesse)
-				|| (objLodeRunner.objetAutour.objEnBas.strType == " " || objLodeRunner.objetAutour.objEnBas.strType == "f")) 
-				&& ((objLodeRunner.intPosXActuel - 15 > objLodeRunner.objetAutour.objAPosLodeRunner.intX && objLodeRunner.intScaleX == 1) 
-				|| (objLodeRunner.intPosXActuel + 15 < objLodeRunner.objetAutour.objAPosLodeRunner.intX + intLongueurCellule && objLodeRunner.intScaleX == -1))) 
-			{
-				objLodeRunner.intPosYActuel += objLodeRunner.intVitesse;
-				objLodeRunner.binMovDroite = false
-				objLodeRunner.binMovGauche = false
-				objLodeRunner.binMovHaut = false
-				objLodeRunner.binMovBas = false
+			if (objLodeRunner.binSurBarre && objLodeRunner.binMovBas) {
+				objLodeRunner.binEnChute = true;
+			}
+
+			if (((((objLodeRunner.objetAutour.objAPosLodeRunner.strType == " " || objLodeRunner.objetAutour.objAPosLodeRunner.strType == "f" || objLodeRunner.objetAutour.objAPosLodeRunner.strType == "o") &&
+				objLodeRunner.intPosYActuel < (objLodeRunner.objetAutour.objEnBas.intY - objLodeRunner.intHauteurParRapportSol)
+				|| (objLodeRunner.objetAutour.objEnBas.strType == " " || objLodeRunner.objetAutour.objEnBas.strType == "f" || objLodeRunner.objetAutour.objEnBas.strType == "o"))
+				&& ((objLodeRunner.intPosXActuel - 15 > objLodeRunner.objetAutour.objAPosLodeRunner.intX && objLodeRunner.intScaleX == 1)
+					|| (objLodeRunner.intPosXActuel + 15 < objLodeRunner.objetAutour.objAPosLodeRunner.intX + intLongueurCellule && objLodeRunner.intScaleX == -1))) && (!objLodeRunner.binSurBarre)) || objLodeRunner.binEnChute) {
+				
+				if ((objLodeRunner.objetAutour.objEnBas.strType == "b" || objLodeRunner.objetAutour.objEnBas.strType == "e") && (objLodeRunner.intPosYActuel == objLodeRunner.objetAutour.objEnBas.intY - 2 || (objLodeRunner.intPosYActuel == objLodeRunner.objetAutour.objEnBas.intY - objLodeRunner.intHauteurParRapportSol))) {
+					objLodeRunner.binEnChute = false;
+				}
+				else {
+					objLodeRunner.intPosYActuel += objLodeRunner.intVitesse;
+					objLodeRunner.binMovDroite = false
+					objLodeRunner.binMovGauche = false
+					objLodeRunner.binMovHaut = false
+				}
+			}
+
+			if (objLodeRunner.objetAutour.objAPosLodeRunner.strType == "f" && (objLodeRunner.objetAutour.objAPosLodeRunner.intY + intHauteurCellule - objLodeRunner.intHauteurParRapportSol) == objLodeRunner.intPosYActuel) {
+				objLodeRunner.binSurBarre = true;
+			}
+			else {
+				objLodeRunner.binSurBarre = false;
 			}
 
 			if (objLodeRunner.binMovGauche && objLodeRunner.intPosXActuel <= objCanvas.width - 15 &&
-			 !(objLodeRunner.objetAutour.objAGauche.strType == "b" && 
-			 (objLodeRunner.intPosXActuel + (intLongueurCellule/2)) == objLodeRunner.objetAutour.objAGauche.intX)) 
-			{
+				!(objLodeRunner.objetAutour.objAGauche.strType == "b" &&
+					(objLodeRunner.intPosXActuel + (intLongueurCellule / 2)) == objLodeRunner.objetAutour.objAGauche.intX)) {
 				objLodeRunner.intScaleX = 1
-				if (!(objLodeRunner.binSurEchelle == true &&  objLodeRunner.objetAutour.objEnHautAGauche.strType == "b")){
+				if (!(objLodeRunner.binSurEchelle == true && objLodeRunner.objetAutour.objEnHautAGauche.strType == "b")) {
 					objLodeRunner.intPosXActuel += objLodeRunner.intVitesse
 					objLodeRunner.binSurEchelle = false;
 				}
-			} 
-			else if (objLodeRunner.binMovDroite && objLodeRunner.intPosXActuel >= 15 
-			&& !(objLodeRunner.objetAutour.objADroite.strType == "b" && 
-			(objLodeRunner.intPosXActuel - (intLongueurCellule/2) < objLodeRunner.objetAutour.objADroite.intX + intLongueurCellule))) 
-			{
+				if (objLodeRunner.objetAutour.objEnHautAGauche.strType == "f" && objLodeRunner.intPosYActuel <= objLodeRunner.objetAutour.objAPosLodeRunner.intY + (3 * intHauteurCellule / 4)) {
+					objLodeRunner.intPosYActuel = objLodeRunner.objetAutour.objEnHautAGauche.intY + intHauteurCellule - objLodeRunner.intHauteurParRapportSol;
+				}
+			}
+			else if (objLodeRunner.binMovDroite && objLodeRunner.intPosXActuel >= 15
+				&& !(objLodeRunner.objetAutour.objADroite.strType == "b" &&
+					(objLodeRunner.intPosXActuel - (intLongueurCellule / 2) < objLodeRunner.objetAutour.objADroite.intX + intLongueurCellule))) {
 				objLodeRunner.intScaleX = -1
-				if (!(objLodeRunner.binSurEchelle == true &&  objLodeRunner.objetAutour.objEnHautADroite.strType == "b")){
+				if (!(objLodeRunner.binSurEchelle == true && objLodeRunner.objetAutour.objEnHautADroite.strType == "b")) {
 					objLodeRunner.intPosXActuel -= objLodeRunner.intVitesse;
 					objLodeRunner.binSurEchelle = false;
 				}
@@ -485,14 +502,13 @@
 			else if (objLodeRunner.binMovBas) {
 				if (((objLodeRunner.objetAutour.objAPosLodeRunner.strType == "e" &&
 					(objLodeRunner.objetAutour.objEnBas.strType == "b" &&
-						objLodeRunner.intPosYActuel < (objLodeRunner.objetAutour.objEnBas.intY - objLodeRunner.intVitesse))) ||
-					objLodeRunner.objetAutour.objEnBas.strType == "e")) 
-				{
+						objLodeRunner.intPosYActuel < (objLodeRunner.objetAutour.objEnBas.intY - objLodeRunner.intHauteurParRapportSol))) ||
+					objLodeRunner.objetAutour.objEnBas.strType == "e")) {
 					objLodeRunner.intPosXActuel = objLodeRunner.objetAutour.objAPosLodeRunner.intX + (intLongueurCellule / 2)
 					objLodeRunner.intPosYActuel += objLodeRunner.intVitesse;
 					objLodeRunner.binSurEchelle = true;
 				}
-				else{
+				else {
 					objLodeRunner.binSurEchelle = false;
 				}
 			}
