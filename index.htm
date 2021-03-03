@@ -211,9 +211,8 @@
 
 				objC2D.fillStyle = objBarreInfo.strCouleurBordureEtTexte;
 				objC2D.font = "30px Arial";
-				objC2D.textAlign = "center";
 				objC2D.textBaseline = 'middle';
-				objC2D.fillText("Score: " + objBarreInfo.intScore, objBarreInfo.intLongueur/14, objBarreInfo.intHauteur/2);
+				objC2D.fillText("Score: " + objBarreInfo.intScore, 10, objBarreInfo.intHauteur/2);
 				objC2D.restore();
 		}
 
@@ -568,7 +567,7 @@
 				}
 			}
 			else if (objLodeRunner.binMovBas) {
-				if (((objLodeRunner.objetAutour.objAPosLodeRunner.strType == 'e' &&
+				if (!objLodeRunner.binEnChute &&((objLodeRunner.objetAutour.objAPosLodeRunner.strType == 'e' &&
 					(objLodeRunner.objetAutour.objEnBas.strType == 'b' &&
 						objLodeRunner.intPosYActuel < (objLodeRunner.objetAutour.objEnBas.intY - objLodeRunner.intHauteurParRapportSol))) ||
 					objLodeRunner.objetAutour.objEnBas.strType == 'e')) {
