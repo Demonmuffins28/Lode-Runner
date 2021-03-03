@@ -160,31 +160,32 @@
 				objGarde1.strCouleur = "red"
 				objGarde1.intVitesse = intVitesse * 0.8
 				objGarde1.binVaTomber = false
-				objGarde1.binVaTomber = false
 				objGarde1.binEnMouvement = false
 				objGarde1.binTombe = false
 				objGarde1.binVaTomber = false
+				objGarde1.intPosYAvantChute = 0
 
 				objGarde2 = new Object()
-				objGarde2.intPosXActuel = 10 * intLongueurCellule
+				objGarde2.intPosXActuel = 8 * intLongueurCellule
 				objGarde2.intPosYActuel = 9 * intHauteurCellule
 				objGarde2.strCouleur = "green"
 				objGarde2.intVitesse = intVitesse * 0.8
 				objGarde2.binVaTomber = false
-				objGarde2.binVaTomber = false
 				objGarde2.binEnMouvement = false
 				objGarde2.binTombe = false
 				objGarde2.binVaTomber = false
+				objGarde2.intPosYAvantChute = 0
 
 				objGarde3 = new Object()
-				objGarde3.intPosXActuel = 10 * intLongueurCellule
-				objGarde3.intPosYActuel = 1 * intHauteurCellule
+				objGarde3.intPosXActuel = 12 * intLongueurCellule
+				objGarde3.intPosYActuel = 3 * intHauteurCellule
 				objGarde3.strCouleur = "purple"
 				objGarde3.intVitesse = intVitesse * 0.8
 				objGarde3.binVaTomber = false
 				objGarde3.binEnMouvement = false
 				objGarde3.binTombe = false
 				objGarde3.binVaTomber = false
+				objGarde3.intPosYAvantChute = 0
 			}
 
 			const animer = () => {
@@ -571,7 +572,7 @@
 				// 	console.log("Game Over")
 				// }
 
-				let objGardeActuel = objGarde2
+				let objGardeActuel = objGarde3
 
 				// Si le garde est en train de tomber (binTombeActuel)
 				if (objGardeActuel.binVaTomber) {
@@ -618,12 +619,9 @@
 				}
 				// Si le garde est dans le vide
 				if (
-					Math.round(intPosXGarde) >=
-						objBrique.tPos[intIndexProchainePlateforme].x + intLongueurCellule &&
+					Math.round(intPosXGarde) >= objBrique.tPos[intIndexProchainePlateforme].x &&
 					Math.round(intPosXGarde) <=
-						objBrique.tPos[intIndexProchainePlateforme].x +
-							intLongueurCellule +
-							intLongueurCellule / 2 &&
+						objBrique.tPos[intIndexProchainePlateforme].x + intLongueurCellule / 2 &&
 					objGarde.binTombe
 				) {
 					// Si le garde n'a pas atteint les prochaines briques en dessous, PosY++
@@ -649,11 +647,10 @@
 				let binTrouvePlateforme = false
 				for (let i = 0; i < objBrique.tPos.length && !binTrouvePlateforme; i++) {
 					if (
-						intPosX >= objBrique.tPos[i].x + intLongueurCellule &&
-						intPosX <= objBrique.tPos[i].x + intLongueurCellule + intLongueurCellule / 2 &&
+						intPosX >= objBrique.tPos[i].x &&
+						intPosX <= objBrique.tPos[i].x + intLongueurCellule / 2 &&
 						intPosY < objBrique.tPos[i].y - intHauteurCellule
 					) {
-						console.log(objBrique.tPos[i].y - intHauteurCellule)
 						intIndexObjBrique = i
 						binTrouvePlateforme = true
 					}
@@ -675,6 +672,7 @@
 							// si la prochaine brique n'esiste pas a cette position X, on fait tomber
 							if (objBrique.tPos[i].x + intLongueurCellule != objBrique.tPos[i + 1].x) {
 								intIndexObjBrique = i
+								binTrouvePlateforme = true
 							}
 						}
 						// Pour regarder a la gauche du garde
@@ -690,6 +688,7 @@
 						) {
 							if (objBrique.tPos[i].x - intLongueurCellule != objBrique.tPos[i - 1].x) {
 								intIndexObjBrique = i
+								binTrouvePlateforme = true
 							}
 						}
 					}
@@ -698,39 +697,94 @@
 				return intIndexObjBrique
 			}
 
+			function trouverProchaineEchelle(intPosX, intPosY) {
+				let intIndexObjEchelle = 0
+				let binTrouveEchelle = false
+				for (let i = 0; i < objEchelle.tPos.length && !binTrouveEchelle; i++) {
+					// Si la position du garde en Y est la meme que celle au dessus de l'echelle
+					if (intPosY == objEchelle.tPos[i].y - intHauteurCellule) {
+						if (
+							objEchelle.tPos[i].x + intLongueurCellule - intPosX <= 2 * intLongueurCellule &&
+							objEchelle.tPos[i].x + intLongueurCellule - intPosX >= 0
+						) {
+							intIndexObjEchelle = i
+							console.log(i)
+							binTrouveEchelle = true
+						}
+
+						// Si le garde est sur le bord de passer sur une echelle (pos) (a une demi cellule)
+
+						// if (
+						// 	intPosX - (intLongueurCellule / 2 - 1) - objEchelle.tPos[i].x <= intLongueurCellule &&
+						// 	intPosX - (intLongueurCellule / 2 - 1) - objEchelle.tPos[i].x >= 0
+						// ) {
+						// 	// si la prochaine echelle n'esiste pas a cette position X, on fait tomber
+						// 	//if (objEchelle.tPos[i].x + intLongueurCellule != objEchelle.tPos[i + 1].x) {
+						// 	intIndexObjEchelle = i
+						// 	binTrouveEchelle = true
+						// 	//}
+						// }
+						// // Pour regarder a la gauche du garde
+						// if (
+						// 	intPosX +
+						// 		(2 * intLongueurCellule - (intLongueurCellule / 2 - 1)) -
+						// 		objEchelle.tPos[i].x <=
+						// 		intLongueurCellule &&
+						// 	intPosX +
+						// 		(2 * intLongueurCellule - (intLongueurCellule / 2 - 1)) -
+						// 		objEchelle.tPos[i].x >=
+						// 		0
+						// ) {
+						// 	if (objEchelle.tPos[i].x - intLongueurCellule != objEchelle.tPos[i - 1].x) {
+						// 		intIndexObjEchelle = i
+						// 		binTrouveEchelle = true
+						// 	}
+						// }
+					}
+				}
+				return intIndexObjEchelle
+			}
+
 			function verifierSiVaTomber(objGarde) {
 				let intPosXGarde = objGarde.intPosXActuel
 				let intPosYGarde = objGarde.intPosYActuel
+				let intIndexPosBrique = trouverProchainePlateformeVide(intPosXGarde, intPosYGarde)
+				let intIndexPosEchelle = trouverProchaineEchelle(intPosXGarde, intPosYGarde)
 				let binVaTomber = false
-				for (let i = 0; i < objBrique.tPos.length; i++) {
-					// Si la position du garde en Y est la meme que celle au dessus de la brique
-					if (intPosYGarde == objBrique.tPos[i].y - intHauteurCellule) {
-						if (
-							intPosXGarde - (intLongueurCellule / 2 - 1) - objBrique.tPos[i].x <=
-								intLongueurCellule &&
-							intPosXGarde - (intLongueurCellule / 2 - 1) - objBrique.tPos[i].x >= 0
-						) {
-							if (objBrique.tPos[i].x + intLongueurCellule != objBrique.tPos[i + 1].x) {
-								binVaTomber = true
-							}
-						}
 
-						if (
-							intPosXGarde +
-								(2 * intLongueurCellule - (intLongueurCellule / 2 - 1)) -
-								objBrique.tPos[i].x <=
-								intLongueurCellule &&
-							intPosXGarde +
-								(2 * intLongueurCellule - (intLongueurCellule / 2 - 1)) -
-								objBrique.tPos[i].x >=
-								0
-						) {
-							if (objBrique.tPos[i].x - intLongueurCellule != objBrique.tPos[i - 1].x) {
-								binVaTomber = true
-							}
-						}
-					}
+				//console.log(objEchelle.tPos[intIndexPosEchelle].x)
+				// Verifier s'il y a une brique a droite
+				if (
+					objBrique.tPos[intIndexPosBrique].x + intLongueurCellule !=
+					objBrique.tPos[intIndexPosBrique + 1].x //&&
+					//intIndexPosEchelle == 0
+				) {
+					binVaTomber = true
 				}
+				// else if (
+				// 	intIndexPosBrique != 0 &&
+				// 	objBrique.tPos[intIndexPosBrique].x + intLongueurCellule !=
+				// 		objBrique.tPos[intIndexPosBrique + 2].x &&
+				// 	intIndexPosEchelle == 0
+				// ) {
+				// 	binVaTomber = true
+				// }
+
+				// if (
+
+				// ) {
+				// 	binVaTomber = false
+				// }
+
+				// Verifier s'il y a une brique a gauche gauche
+				if (
+					intIndexPosBrique != 0 &&
+					objBrique.tPos[intIndexPosBrique].x - intLongueurCellule !=
+						objBrique.tPos[intIndexPosBrique - 1].x
+				) {
+					binVaTomber = true
+				}
+
 				return binVaTomber
 			}
 		</script>
