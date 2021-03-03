@@ -24,6 +24,7 @@
 		let objImageOr = null
 		let objOr = null
 
+		let objDate = null;
 		const intVitesse = 2.5
 
 		let objLodeRunner = null
@@ -117,6 +118,8 @@
 							objBrique.tPos.push({
 								x: j * intLongueurCellule,
 								y: i * intHauteurCellule,
+								binTrou: false,
+								objDateTrou: null
 							})
 							break
 						case "e":
@@ -159,7 +162,9 @@
 		}
 
 		const mettreAJourAnimation = () => {
+			objDate = new Date()
 			mettreAJourAnimationLodeRunner()
+			mettreAJourObjBrique()
 		}
 
 		const arreterAnimation = () => {
@@ -174,6 +179,7 @@
 			dessinerBarreFranchissement()
 			dessinerOr()
 			dessinerLodeRunner()
+			dessinerBrique()
 		}
 
 		const dessinerFond = () => {
@@ -188,41 +194,53 @@
 		const dessinerBrique = () => {
 			objC2D.save()
 			for (let index = 0; index < objBrique.tPos.length; index++) {
-				let intPosXActuel = objBrique.tPos[index].x
-				let intPosYActuel = objBrique.tPos[index].y
+				if (!objBrique.tPos[index].binTrou){
+					let intPosXActuel = objBrique.tPos[index].x
+					let intPosYActuel = objBrique.tPos[index].y
 
-				objC2D.fillStyle = "red"
-				objC2D.beginPath()
-				objC2D.rect(intPosXActuel, intPosYActuel, intLongueurCellule, intHauteurCellule)
-				objC2D.fill()
+					objC2D.fillStyle = "red"
+					objC2D.beginPath()
+					objC2D.rect(intPosXActuel, intPosYActuel, intLongueurCellule, intHauteurCellule)
+					objC2D.fill()
 
-				objC2D.strokeStyle = "gray"
-				objC2D.lineWidth = 3
-				objC2D.beginPath()
-				objC2D.moveTo(intPosXActuel, intPosYActuel)
-				objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel)
-				objC2D.moveTo(intPosXActuel, intPosYActuel + intHauteurCellule)
-				objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + intHauteurCellule)
-				objC2D.moveTo(intPosXActuel + intLongueurCellule / 3, intPosYActuel + intHauteurCellule)
-				objC2D.lineTo(
-					intPosXActuel + intLongueurCellule / 3,
-					intPosYActuel + intHauteurCellule / 2
-				)
-				objC2D.moveTo(intPosXActuel + (2 * intLongueurCellule) / 3, intPosYActuel)
-				objC2D.lineTo(
-					intPosXActuel + (2 * intLongueurCellule) / 3,
-					intPosYActuel + intHauteurCellule / 2
-				)
-				objC2D.stroke()
+					objC2D.strokeStyle = "gray"
+					objC2D.lineWidth = 3
+					objC2D.beginPath()
+					objC2D.moveTo(intPosXActuel, intPosYActuel)
+					objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel)
+					objC2D.moveTo(intPosXActuel, intPosYActuel + intHauteurCellule)
+					objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + intHauteurCellule)
+					objC2D.moveTo(intPosXActuel + intLongueurCellule / 3, intPosYActuel + intHauteurCellule)
+					objC2D.lineTo(
+						intPosXActuel + intLongueurCellule / 3,
+						intPosYActuel + intHauteurCellule / 2
+					)
+					objC2D.moveTo(intPosXActuel + (2 * intLongueurCellule) / 3, intPosYActuel)
+					objC2D.lineTo(
+						intPosXActuel + (2 * intLongueurCellule) / 3,
+						intPosYActuel + intHauteurCellule / 2
+					)
+					objC2D.stroke()
 
-				objC2D.strokeStyle = "gray"
-				objC2D.lineWidth = 5
-				objC2D.beginPath()
-				objC2D.moveTo(intPosXActuel, intPosYActuel + intHauteurCellule / 2)
-				objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + intHauteurCellule / 2)
-				objC2D.stroke()
+					objC2D.strokeStyle = "gray"
+					objC2D.lineWidth = 5
+					objC2D.beginPath()
+					objC2D.moveTo(intPosXActuel, intPosYActuel + intHauteurCellule / 2)
+					objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + intHauteurCellule / 2)
+					objC2D.stroke()
+				}
 			}
 			objC2D.restore()
+		}
+
+		const mettreAJourObjBrique = () => {
+			for (i = 0; i < objBrique.tPos.length; i++) {
+				if (objBrique.tPos[i].binTrou && (objDate - objBrique.tPos[i].objDateTrou) > 8000){
+					objBrique.tPos[i].binTrou = false;
+					objBrique.tPos[i].objDateTrou = null;
+					tTableauDeJeu[objBrique.tPos[i].y/intHauteurCellule][objBrique.tPos[i].x/intLongueurCellule] = "b";
+				}
+			}
 		}
 
 		const dessinerEchelle = () => {
@@ -440,6 +458,9 @@
 		function mettreAJourAnimationLodeRunner() {
 			touverObjetAutourLodeRunner();
 			//chute
+			if (objLodeRunner.objetAutour.objAPosLodeRunner.strType == "b" || (objLodeRunner.objetAutour.objEnHaut.strType == "b" && objLodeRunner.intPosYActuel+ intHauteurCellule < objLodeRunner.objetAutour.objEnHaut.strType+ intHauteurCellule)){
+				console.log("game over");
+			}
 			if (objLodeRunner.binSurBarre && objLodeRunner.binMovBas && objLodeRunner.objetAutour.objEnBas.strType != "e") {
 				objLodeRunner.binEnChute = true;
 			}
@@ -545,6 +566,38 @@
 				case 40:
 					objLodeRunner.binMovBas = false
 					break
+					case 90:
+					if (objLodeRunner.objetAutour.objEnBasADroite.strType == "b"){
+						for (i = 0; i<objBrique.tPos.length; i++){
+							if ((objLodeRunner.objetAutour.objEnBasADroite.intX == objBrique.tPos[i].x 
+								&& objLodeRunner.objetAutour.objEnBasADroite.intY == objBrique.tPos[i].y) 
+								&& objLodeRunner.objetAutour.objADroite.strType != "e" 
+								&& objLodeRunner.objetAutour.objADroite.strType != "o" 
+								&& !objLodeRunner.binSurEchelle
+								&& !objLodeRunner.binSurBarre){
+								objBrique.tPos[i].binTrou = true;
+								objBrique.tPos[i].objDateTrou = new Date();
+								tTableauDeJeu[objBrique.tPos[i].y/intHauteurCellule][objBrique.tPos[i].x/intLongueurCellule] = " ";
+							}
+						}
+					}
+					break
+				case 88:
+					if (objLodeRunner.objetAutour.objEnBasAGauche.strType == "b"){
+						for (i = 0; i<objBrique.tPos.length; i++){
+							if ((objLodeRunner.objetAutour.objEnBasAGauche.intX == objBrique.tPos[i].x 
+								&& objLodeRunner.objetAutour.objEnBasAGauche.intY == objBrique.tPos[i].y) 
+								&& objLodeRunner.objetAutour.objAGauche.strType != "e" 
+								&& objLodeRunner.objetAutour.objAGauche.strType != "o" 
+								&& !objLodeRunner.binSurEchelle
+								&& !objLodeRunner.binSurBarre){
+								objBrique.tPos[i].binTrou = true;
+								objBrique.tPos[i].objDateTrou = new Date();
+								tTableauDeJeu[objBrique.tPos[i].y/intHauteurCellule][objBrique.tPos[i].x/intLongueurCellule] = " ";
+							}
+						}
+					}
+					break
 			}
 		}
 	</script>
@@ -552,8 +605,10 @@
 
 <body onload="initAnimation()">
 	<main class="sLargeurDiv sCorps">
-		<canvas id="monCanvas" width="1400" height="680" tabindex="1" onkeydown="mouvementLodeRunner();"
-			onkeyup="arreterMouvementLodeRunner()">
+		<canvas id="monCanvas" width="1400" height="680" tabindex="1" 
+			onkeydown="mouvementLodeRunner();" 
+			onkeyup="arreterMouvementLodeRunner()"
+			>
 			Votre navigateur ne supporte pas la balise canvas
 		</canvas>
 	</main>
