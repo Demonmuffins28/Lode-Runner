@@ -440,7 +440,7 @@
 		function mettreAJourAnimationLodeRunner() {
 			touverObjetAutourLodeRunner();
 			//chute
-			if (objLodeRunner.binSurBarre && objLodeRunner.binMovBas) {
+			if (objLodeRunner.binSurBarre && objLodeRunner.binMovBas && objLodeRunner.objetAutour.objEnBas.strType != "e") {
 				objLodeRunner.binEnChute = true;
 			}
 
@@ -449,8 +449,9 @@
 				|| (objLodeRunner.objetAutour.objEnBas.strType == " " || objLodeRunner.objetAutour.objEnBas.strType == "f" || objLodeRunner.objetAutour.objEnBas.strType == "o"))
 				&& ((objLodeRunner.intPosXActuel - 15 > objLodeRunner.objetAutour.objAPosLodeRunner.intX && objLodeRunner.intScaleX == 1)
 					|| (objLodeRunner.intPosXActuel + 15 < objLodeRunner.objetAutour.objAPosLodeRunner.intX + intLongueurCellule && objLodeRunner.intScaleX == -1))) && (!objLodeRunner.binSurBarre)) || objLodeRunner.binEnChute) {
-				
-				if ((objLodeRunner.objetAutour.objEnBas.strType == "b" || objLodeRunner.objetAutour.objEnBas.strType == "e") && (objLodeRunner.intPosYActuel == objLodeRunner.objetAutour.objEnBas.intY - 2 || (objLodeRunner.intPosYActuel == objLodeRunner.objetAutour.objEnBas.intY - objLodeRunner.intHauteurParRapportSol))) {
+
+				if ((objLodeRunner.objetAutour.objEnBas.strType == "b" || objLodeRunner.objetAutour.objEnBas.strType == "e") && (objLodeRunner.intPosYActuel == objLodeRunner.objetAutour.objEnBas.intY - 2 
+				|| (objLodeRunner.intPosYActuel == objLodeRunner.objetAutour.objEnBas.intY - objLodeRunner.intHauteurParRapportSol))) {
 					objLodeRunner.binEnChute = false;
 				}
 				else {
