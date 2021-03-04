@@ -28,39 +28,36 @@
 			let objGarde3 = null
 			let objLodeRunner = null
 
-			const intVitesse = 2
-
-			let binEnMouvement = false
-			let binTombeActuel = false
+			const intVitesse = 2.5
 
 			/*
-							" " = case vide (espace dans les guillemets)
-							"o" = or
-							"b" = brique
-							"e" = echelle
-							"f" = barre de franchissement
-							"p" = plancher gris
-						*/
+											" " = case vide (espace dans les guillemets)
+											"o" = or
+											"b" = brique
+											"e" = echelle
+											"f" = barre de franchissement
+											"p" = plancher gris
+										*/
 			// prettier-ignore
 			let tTableauDeJeu = [
-																	[" "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],
-																	[" "," "," "," ","o"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],
-																	["b","b","b","b","b","b","b","e","b","b","b","b","b","b","b"," "," "," "," "," "," "," "," "," "," "," "," "," "],
-																	[" "," "," "," "," "," "," ","e","f","f","f","f","f","f","f","f","f","f"," "," "," "," "," ","o"," "," "," "," "],
-																	[" "," "," "," "," "," "," ","e"," "," "," "," ","b","b","e"," "," "," ","b","b","b","b","b","b","b","e","b","b"],
-																	[" "," "," "," "," "," "," ","e"," "," "," "," ","b","b","e"," "," "," "," "," "," "," "," "," "," ","e"," "," "],
-																	[" "," "," "," "," "," "," ","e"," "," "," "," ","b","b","e"," "," "," "," "," "," "," ","o"," "," ","e"," "," "],
-																	["b","b","e","b","b","b","b","b"," "," "," "," ","b","b","b","b","b","b","b","b","e","b","b","b","b","b","b","b"],
-																	[" "," ","e"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","e"," "," "," "," "," "," "," "],
-																	[" "," ","e"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","e"," "," "," "," "," "," "," "],
-																	["b","b","b","b","b","b","b","b","b","e","b","b","b","b","b","b","b","b","b","b","e"," "," "," "," "," "," "," "],
-																	[" "," "," "," "," "," "," "," "," ","e"," "," "," "," "," "," "," "," "," "," ","e"," "," "," "," "," "," "," "],
-																	[" "," "," "," "," "," "," ","o"," ","e","f","f","f","f","f","f","f","f","f","f","e"," "," "," ","o"," "," "," "],
-																	[" "," "," "," ","e","b","b","b","b","b","b"," "," "," "," "," "," "," "," "," ","b","b","b","b","b","b","b","e"],
-																	[" "," "," "," ","e"," "," "," "," "," "," "," "," "," "," "," "," "," ","o"," "," "," "," "," "," "," "," ","e"],
-																	["b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b"],
-																	["p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p"]
-																]
+																					[" "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],
+																					[" "," "," "," ","o"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],
+																					["b","b","b","b","b","b","b","e","b","b","b","b","b","b","b"," "," "," "," "," "," "," "," "," "," "," "," "," "],
+																					[" "," "," "," "," "," "," ","e","f","f","f","f","f","f","f","f","f","f"," "," "," "," "," ","o"," "," "," "," "],
+																					[" "," "," "," "," "," "," ","e"," "," "," "," ","b","b","e"," "," "," ","b","b","b","b","b","b","b","e","b","b"],
+																					[" "," "," "," "," "," "," ","e"," "," "," "," ","b","b","e"," "," "," "," "," "," "," "," "," "," ","e"," "," "],
+																					[" "," "," "," "," "," "," ","e"," "," "," "," ","b","b","e"," "," "," "," "," "," "," ","o"," "," ","e"," "," "],
+																					["b","b","e","b","b","b","b","b"," "," "," "," ","b","b","b","b","b","b","b","b","e","b","b","b","b","b","b","b"],
+																					[" "," ","e"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","e"," "," "," "," "," "," "," "],
+																					[" "," ","e"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," ","e"," "," "," "," "," "," "," "],
+																					["b","b","b","b","b","b","b","b","b","e","b","b","b","b","b","b","b","b","b","b","e"," "," "," "," "," "," "," "],
+																					[" "," "," "," "," "," "," "," "," ","e"," "," "," "," "," "," "," "," "," "," ","e"," "," "," "," "," "," "," "],
+																					[" "," "," "," "," "," "," ","o"," ","e","f","f","f","f","f","f","f","f","f","f","e"," "," "," ","o"," "," "," "],
+																					[" "," "," "," ","e","b","b","b","b","b","b"," "," "," "," "," "," "," "," "," ","b","b","b","b","b","b","b","e"],
+																					[" "," "," "," ","e"," "," "," "," "," "," "," "," "," "," "," "," "," ","o"," "," "," "," "," "," "," "," ","e"],
+																					["b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b","b"],
+																					["p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p","p"]
+																				]
 
 			const initAnimation = () => {
 				objCanvas = document.getElementById("monCanvas")
@@ -155,37 +152,49 @@
 
 			const initGardes = () => {
 				objGarde1 = new Object()
-				objGarde1.intPosXActuel = 7 * intLongueurCellule
+				objGarde1.intPosXActuel = 22 * intLongueurCellule
 				objGarde1.intPosYActuel = 12 * intHauteurCellule
 				objGarde1.strCouleur = "red"
-				objGarde1.intVitesse = intVitesse * 0.8
-				objGarde1.binVaTomber = false
-				objGarde1.binEnMouvement = false
-				objGarde1.binTombe = false
-				objGarde1.binVaTomber = false
-				objGarde1.intPosYAvantChute = 0
+				objGarde1.intVitesse = intVitesse
+				objGarde1.intScaleX = 1
+				objGarde1.binMovDroite = false
+				objGarde1.binMovGauche = false
+				objGarde1.binMovHaut = false
+				objGarde1.binMovBas = false
+				objGarde1.binSurEchelle = false
+				objGarde1.binSurBarre = false
+				objGarde1.binEnChute = false
+				objGarde1.objetAutour = {}
 
 				objGarde2 = new Object()
 				objGarde2.intPosXActuel = 8 * intLongueurCellule
 				objGarde2.intPosYActuel = 9 * intHauteurCellule
 				objGarde2.strCouleur = "green"
 				objGarde2.intVitesse = intVitesse * 0.8
-				objGarde2.binVaTomber = false
-				objGarde2.binEnMouvement = false
-				objGarde2.binTombe = false
-				objGarde2.binVaTomber = false
-				objGarde2.intPosYAvantChute = 0
+				objGarde2.intScaleX = 1
+				objGarde2.binMovDroite = false
+				objGarde2.binMovGauche = false
+				objGarde2.binMovHaut = false
+				objGarde2.binMovBas = false
+				objGarde2.binSurEchelle = false
+				objGarde2.binSurBarre = false
+				objGarde2.binEnChute = false
+				objGarde2.objetAutour = {}
 
 				objGarde3 = new Object()
 				objGarde3.intPosXActuel = 12 * intLongueurCellule
 				objGarde3.intPosYActuel = 3 * intHauteurCellule
 				objGarde3.strCouleur = "purple"
 				objGarde3.intVitesse = intVitesse * 0.8
-				objGarde3.binVaTomber = false
-				objGarde3.binEnMouvement = false
-				objGarde3.binTombe = false
-				objGarde3.binVaTomber = false
-				objGarde3.intPosYAvantChute = 0
+				objGarde3.intScaleX = 1
+				objGarde3.binMovDroite = false
+				objGarde3.binMovGauche = false
+				objGarde3.binMovHaut = false
+				objGarde3.binMovBas = false
+				objGarde3.binSurEchelle = false
+				objGarde3.binSurBarre = false
+				objGarde3.binEnChute = false
+				objGarde3.objetAutour = {}
 			}
 
 			const animer = () => {
@@ -204,7 +213,8 @@
 
 			const mettreAJourAnimation = () => {
 				mettreAJourAnimationLoneRunner()
-				if (objGarde1.intPosXActuel + 10) mouvementGarde()
+				mettreAJourAnimPerso()
+				algorithmeGarde()
 			}
 
 			const arreterAnimation = () => {
@@ -344,13 +354,21 @@
 
 			const initObjLodeRunner = () => {
 				objLodeRunner = new Object()
+				objLodeRunner.intHauteurParRapportSol = 2.5
 				objLodeRunner.intPosXActuel =
-					15 * intLongueurCellule - intLongueurCellule / 2 + intLongueurCellule / 2
-				objLodeRunner.intPosYActuel = 14 * intHauteurCellule + intHauteurCellule - 2
+					11 * intLongueurCellule - intLongueurCellule / 2 + intLongueurCellule / 2
+				objLodeRunner.intPosYActuel =
+					9 * intHauteurCellule + intHauteurCellule - objLodeRunner.intHauteurParRapportSol
 				objLodeRunner.intVitesse = intVitesse
 				objLodeRunner.intScaleX = 1
 				objLodeRunner.binMovDroite = false
 				objLodeRunner.binMovGauche = false
+				objLodeRunner.binMovHaut = false
+				objLodeRunner.binMovBas = false
+				objLodeRunner.binSurEchelle = false
+				objLodeRunner.binSurBarre = false
+				objLodeRunner.binEnChute = false
+				objLodeRunner.objetAutour = {}
 			}
 
 			const dessinerLodeRunner = () => {
@@ -431,28 +449,36 @@
 				let intPosXActuel = null
 				let intPosYActuel = null
 				let strCouleurGarde = ""
+				let scaleX = null
 
 				for (let i = 1; i <= 3; i++) {
+					objC2D.save()
 					if (i == 1) {
 						strCouleurGarde = objGarde1.strCouleur
-						intPosXActuel = objGarde1.intPosXActuel
-						intPosYActuel = objGarde1.intPosYActuel
+						objC2D.translate(
+							objGarde1.intPosXActuel + intLongueurCellule / 2,
+							objGarde1.intPosYActuel + intHauteurCellule - 2
+						)
+						scaleX = objGarde1.intScaleX
 					} else if (i == 2) {
 						strCouleurGarde = objGarde2.strCouleur
-						intPosXActuel = objGarde2.intPosXActuel
-						intPosYActuel = objGarde2.intPosYActuel
+						objC2D.translate(
+							objGarde2.intPosXActuel + intLongueurCellule / 2,
+							objGarde2.intPosYActuel + intHauteurCellule - 2
+						)
+						scaleX = objGarde2.intScaleX
 					} else {
 						strCouleurGarde = objGarde3.strCouleur
-						intPosXActuel = objGarde3.intPosXActuel
-						intPosYActuel = objGarde3.intPosYActuel
+						objC2D.translate(
+							objGarde3.intPosXActuel + intLongueurCellule / 2,
+							objGarde3.intPosYActuel + intHauteurCellule - 2
+						)
+						scaleX = objGarde3.intScaleX
 					}
 
-					intPosPlancherY = intPosYActuel + intHauteurCellule - 2
-					intPosCentreX = intPosXActuel + intLongueurCellule / 2
-
-					objC2D.beginPath()
-					objC2D.rect(intPosXActuel, intPosYActuel, intLongueurCellule, intHauteurCellule)
-					objC2D.stroke()
+					objC2D.scale(scaleX, 1)
+					intPosPlancherY = intPosYActuel
+					intPosCentreX = intPosXActuel
 
 					// Dessiner a partir du base au centre de la cellule
 					objC2D.strokeStyle = "white"
@@ -530,6 +556,7 @@
 					objC2D.moveTo(intPosCentreX, intPosPlancherY - 32)
 					objC2D.lineTo(intPosCentreX, intPosPlancherY - 35)
 					objC2D.stroke()
+					objC2D.restore()
 				}
 				objC2D.restore()
 			}
@@ -558,234 +585,357 @@
 				}
 			}
 
-			const mouvementGarde = () => {
-				// if (objLodeRunner.intPosYActuel == objGarde1.intPosYActuel + intHauteurCellule - 2) {
-				// 	if (objLodeRunner.intPosXActuel - (objGarde1.intPosXActuel + 50) > 0) {
-				// 		objGarde1.intPosXActuel += objGarde1.intVitesse
-				// 	} else if (objLodeRunner.intPosXActuel - objGarde1.intPosXActuel < 0)
-				// 		objGarde1.intPosXActuel -= objGarde1.intVitesse
-				// }
-				// if (
-				// 	objLodeRunner.intPosXActuel - objGarde1.intPosXActuel <= 50 &&
-				// 	objLodeRunner.intPosXActuel - objGarde1.intPosXActuel >= 0
-				// ) {
-				// 	console.log("Game Over")
-				// }
-
-				let objGardeActuel = objGarde3
-
-				// Si le garde est en train de tomber (binTombeActuel)
-				if (objGardeActuel.binVaTomber) {
-					faireTomber(objGardeActuel)
-				}
-				// Si le garde n'est pas en train de tomber
-				else if (!objGardeActuel.binTombe) {
-					// Si le garde se deplace vers la gauche ou la droite
-					if (objGardeActuel.binEnMouvement) {
-						// Verifier s'il va tomber au prochain refresh
-						objGardeActuel.binVaTomber = verifierSiVaTomber(objGardeActuel)
-						objGardeActuel.intPosYAvantChute = objGardeActuel.intPosYActuel
-					}
-					// Si on detecte que le garde ne va pas tomber on change sa position et on indique qu'il est en mouvement
-					if (!objGardeActuel.binVaTomber) {
-						objGardeActuel.intPosXActuel += objGardeActuel.intVitesse
-						objGardeActuel.binEnMouvement = true
-					}
-					// Si le garde va tomber au prochain refresh
-					else if (objGardeActuel.binVaTomber) {
-						objGardeActuel.binEnMouvement = false
-					}
-				}
-			}
-
-			function faireTomber(objGarde) {
-				let intPosXGarde = objGarde.intPosXActuel
-				let intPosYGarde = objGarde.intPosYActuel
-				let intIndexProchainePlateforme = trouverProchainePlateforme(
-					intPosXGarde,
-					objGarde.intPosYAvantChute
+			const trouverObjetAutourPerso = (objPerso) => {
+				let intX = Math.floor(
+					(objPerso.intPosXActuel + intLongueurCellule / 2) / intLongueurCellule
 				)
-				let intIndexBriqueVide = trouverProchainePlateformeVide(intPosXGarde, intPosYGarde)
-				// pour faire depasser le garde des briques (amener dans le vide)
-				// si la brique est sur la position du garde - la hauteur de la cellule
-				if (intPosYGarde == objBrique.tPos[intIndexBriqueVide].y - intHauteurCellule) {
-					// si le garde est a gauche du vide
-					if (intPosXGarde < objBrique.tPos[intIndexBriqueVide].x + intLongueurCellule) {
-						// avance le garde pour le mettre dans le vide
-						objGarde.intPosXActuel += objGarde.intVitesse
+				let intY = Math.floor(objPerso.intPosYActuel / intHauteurCellule)
+				objPerso.objetAutour = {
+					objAPosPerso: {
+						strType: tTableauDeJeu[intY][intX],
+						intX: intX * intLongueurCellule,
+						intY: intY * intHauteurCellule,
+					},
+					objADroite: {
+						strType: tTableauDeJeu[intY][intX + 1],
+						intX: (intX + 1) * intLongueurCellule,
+						intY: intY * intHauteurCellule,
+					},
+					objAGauche: {
+						strType: tTableauDeJeu[intY][intX - 1],
+						intX: (intX - 1) * intLongueurCellule,
+						intY: intY * intHauteurCellule,
+					},
+					objEnHaut: {
+						strType: tTableauDeJeu[intY - 1][intX],
+						intX: intX * intLongueurCellule,
+						intY: (intY - 1) * intHauteurCellule,
+					},
+					objEnBas: {
+						strType: tTableauDeJeu[intY + 1][intX],
+						intX: intX * intLongueurCellule,
+						intY: (intY + 1) * intHauteurCellule,
+					},
+					objEnBasADroite: {
+						strType: tTableauDeJeu[intY + 1][intX + 1],
+						intX: (intX + 1) * intLongueurCellule,
+						intY: (intY + 1) * intHauteurCellule,
+					},
+					objEnBasAGauche: {
+						strType: tTableauDeJeu[intY + 1][intX - 1],
+						intX: (intX - 1) * intLongueurCellule,
+						intY: (intY + 1) * intHauteurCellule,
+					},
+					objEnHautADroite: {
+						strType: tTableauDeJeu[intY - 1][intX + 1],
+						intX: (intX + 1) * intLongueurCellule,
+						intY: (intY - 1) * intHauteurCellule,
+					},
+					objEnHautAGauche: {
+						strType: tTableauDeJeu[intY - 1][intX - 1],
+						intX: (intX - 1) * intLongueurCellule,
+						intY: (intY - 1) * intHauteurCellule,
+					},
+				}
+			}
+
+			const mettreAJourAnimPerso = () => {
+				let objPerso = objGarde1
+				trouverObjetAutourPerso(objPerso)
+				// console.log(
+				// 	"Pos Perso: " +
+				// 		objPerso.intPosYActuel +
+				// 		", Pos Obj A Perso: " +
+				// 		objPerso.objetAutour.objAPosPerso.intY
+				// )
+				// console.log(
+				// 	objGarde1.binMovGauche +
+				// 		", " +
+				// 		objGarde1.binMovDroite +
+				// 		", " +
+				// 		objGarde1.binMovHaut +
+				// 		", " +
+				// 		objGarde1.binMovBas +
+				// 		", " +
+				// 		objGarde1.binSurEchelle
+				// )
+				if (
+					objPerso.binSurBarre &&
+					objPerso.binMovBas &&
+					objPerso.objetAutour.objEnBas.strType != "e"
+				) {
+					// Le mettre en chute
+					objPerso.binEnChute = true
+				}
+
+				if (
+					((objPerso.objetAutour.objEnBas.strType == " " ||
+						objPerso.objetAutour.objEnBas.strType == "f" ||
+						objPerso.objetAutour.objEnBas.strType == "o") &&
+						((objPerso.intPosXActuel >= objPerso.objetAutour.objAPosPerso.intX &&
+							objPerso.intScaleX == 1) ||
+							(objPerso.intPosXActuel <= objPerso.objetAutour.objAPosPerso.intX &&
+								objPerso.intScaleX == -1)) &&
+						!objPerso.binSurBarre) ||
+					objPerso.binEnChute
+				) {
+					// S'il y a un bloc ou une echelle en dessous, ne chute pas
+					if (
+						(objPerso.objetAutour.objEnBas.strType == "b" ||
+							objPerso.objetAutour.objEnBas.strType == "e") &&
+						objPerso.intPosYActuel == objPerso.objetAutour.objEnBas.intY - intHauteurCellule
+					) {
+						objPerso.binEnChute = false
+					}
+					// S'il peut continuer a chuter, augmentes sa position en Y
+					else {
+						objPerso.binEnChute = true
+						objPerso.intPosYActuel += objPerso.intVitesse
+						objPerso.binMovDroite = false
+						objPerso.binMovGauche = false
+						objPerso.binMovHaut = false
+					}
+				}
+
+				//S'il y a une barre de franchissement autour du perso
+				if (
+					objPerso.objetAutour.objAPosPerso.strType == "f" &&
+					objPerso.objetAutour.objAPosPerso.intY == objPerso.intPosYActuel
+				) {
+					objPerso.binSurBarre = true
+				} else {
+					objPerso.binSurBarre = false
+				}
+				// si on veux se deplace a gauche et on nest pas au extremite du jeu et qu'il ny a pas de bloc et asser de place pour tourner
+				if (
+					objPerso.binMovGauche &&
+					objPerso.intPosXActuel >= -5 &&
+					!(
+						objPerso.objetAutour.objAGauche.strType == "b" &&
+						objPerso.intPosXActuel - intLongueurCellule == objPerso.objetAutour.objAGauche.intX
+					)
+				) {
+					objPerso.intScaleX = -1
+					// S'il n'y a pas dechelle ou de brique, on ce deplace a droite
+					if (
+						!(
+							objPerso.binSurEchelle == true && objPerso.objetAutour.objEnHautAGauche.strType == "b"
+						)
+					) {
+						objPerso.intPosXActuel -= objPerso.intVitesse
+						objPerso.binSurEchelle = false
+					}
+					// Si il y a un barre en haut a gauche et que le perso n'est pas trop haut
+					if (
+						objPerso.objetAutour.objEnHautAGauche.strType == "f" &&
+						objPerso.intPosYActuel <=
+							objPerso.objetAutour.objAPosPerso.intY + (3 * intHauteurCellule) / 4
+					) {
+						objPerso.intPosYActuel = objPerso.objetAutour.objEnHautAGauche.intY + intHauteurCellule
+					}
+				}
+				// Si le perso veux se deplace vers la droite et qu'il peux se deplacer, on le tourne de cote
+				else if (
+					objPerso.binMovDroite &&
+					objPerso.intPosXActuel + intLongueurCellule <= objCanvas.width + 10 &&
+					!(
+						objPerso.objetAutour.objADroite.strType == "b" &&
+						objPerso.intPosXActuel - intLongueurCellule / 2 <
+							objPerso.objetAutour.objADroite.intX + intLongueurCellule
+					)
+				) {
+					objPerso.intScaleX = 1
+					// si le perso n'est pas sur une echelle et qu'il n'y a pas de bloque en haut a droite
+					// il peu bouger vers la gauche
+					if (
+						!(
+							objPerso.binSurEchelle == true && objPerso.objetAutour.objEnHautADroite.strType == "b"
+						)
+					) {
+						objPerso.intPosXActuel += objPerso.intVitesse
+						objPerso.binSurEchelle = false
+					}
+				}
+				// Si le perso veux ce deplace vers le haut
+				else if (objPerso.binMovHaut) {
+					// Si il y a une echelle autour, accroche le au centre de l'echelle
+					if (
+						objPerso.objetAutour.objAPosPerso.strType == "e" ||
+						objPerso.objetAutour.objAPosPerso.strType == " " ||
+						(objPerso.objetAutour.objAPosPerso.strType == "f" &&
+							objPerso.objetAutour.objEnBas.strType == "e")
+					) {
+						objPerso.intPosXActuel = objPerso.objetAutour.objAPosPerso.intX
+						objPerso.intPosYActuel -= objPerso.intVitesse
+						objPerso.binSurEchelle = true
+					}
+					// S'il n'y a pas dechelle pour s'acrocher
+					else {
+						objPerso.binSurEchelle = false
+						objPerso.intPosYActuel = objPerso.objetAutour.objAPosPerso.intY
+					}
+				}
+				// Si le perso veux ce deplace vers le bas
+				else if (objPerso.binMovBas) {
+					// S'il est sur une echelle et qu'il y a une brique en dessous et qu'il peu encore descendre ou
+					// s'il y a une echelle en dessous
+					if (
+						(objPerso.objetAutour.objAPosPerso.strType == "e" &&
+							objPerso.objetAutour.objEnBas.strType == "b" &&
+							objPerso.intPosYActuel + intHauteurCellule < objPerso.objetAutour.objEnBas.intY) ||
+						objPerso.objetAutour.objEnBas.strType == "e"
+					) {
+						objPerso.intPosXActuel = objPerso.objetAutour.objAPosPerso.intX
+						objPerso.intPosYActuel += objPerso.intVitesse
+						objPerso.binSurEchelle = true
 					} else {
-						objGarde.binTombe = true
+						objPerso.binSurEchelle = false
 					}
 				}
-				// Si le garde est dans le vide
+			}
+
+			const mouvementPerso = () => {
+				objPerso = objGarde1
+				switch (event.keyCode) {
+					case 37:
+						objPerso.binMovGauche = true
+						break
+					case 39:
+						objPerso.binMovDroite = true
+						break
+					case 38:
+						objPerso.binMovHaut = true
+						break
+					case 40:
+						objPerso.binMovBas = true
+						break
+				}
+			}
+			const arreterMouvementPerso = () => {
+				objPerso = objGarde1
+				switch (event.keyCode) {
+					case 37:
+						objPerso.binMovGauche = false
+						break
+					case 39:
+						objPerso.binMovDroite = false
+						break
+					case 38:
+						objPerso.binMovHaut = false
+						break
+					case 40:
+						objPerso.binMovBas = false
+						break
+				}
+			}
+
+			const algorithmeGarde = () => {
+				// console.log(
+				// 	objLodeRunner.intPosYActuel -
+				// 		intHauteurCellule +
+				// 		objLodeRunner.intVitesse +
+				// 		", " +
+				// 		objGarde1.intPosYActuel
+				// )
+				// Si le garde est au meme etage que lodeRunner
 				if (
-					Math.round(intPosXGarde) >= objBrique.tPos[intIndexProchainePlateforme].x &&
-					Math.round(intPosXGarde) <=
-						objBrique.tPos[intIndexProchainePlateforme].x + intLongueurCellule / 2 &&
-					objGarde.binTombe
+					objLodeRunner.intPosYActuel - intHauteurCellule + objLodeRunner.intVitesse ==
+					objGarde1.intPosYActuel
 				) {
-					// Si le garde n'a pas atteint les prochaines briques en dessous, PosY++
+					// Va a droite si la position du garde est plus petite que celle de lode runner
 					if (
-						objBrique.tPos[intIndexProchainePlateforme].y - intHauteurCellule >
-						Math.round(intPosYGarde)
+						objLodeRunner.intPosXActuel - (objGarde1.intPosXActuel + intLongueurCellule / 2) >
+						0
 					) {
-						objGarde.intPosYActuel += objGarde.intVitesse
+						objGarde1.binMovGauche = false
+						objGarde1.binMovHaut = false
+						objGarde1.binMovBas = false
+						objGarde1.binMovDroite = true
 					}
-					// Si le garde a atteint la position des briques en dessous
+					// Va a gauche si la position du garde est plus grande que celle de lode runner
 					else if (
-						objBrique.tPos[intIndexProchainePlateforme].y - intHauteurCellule ==
-						Math.round(intPosYGarde)
+						objLodeRunner.intPosXActuel - (objGarde1.intPosXActuel + intLongueurCellule / 2) <
+						0
 					) {
-						objGarde.binTombe = false
-						objGarde.binVaTomber = false
+						objGarde1.binMovDroite = false
+						objGarde1.binMovHaut = false
+						objGarde1.binMovBas = false
+						objGarde1.binMovGauche = true
 					}
-				}
-			}
-
-			function trouverProchainePlateforme(intPosX, intPosY) {
-				let intIndexObjBrique = 0
-				let binTrouvePlateforme = false
-				for (let i = 0; i < objBrique.tPos.length && !binTrouvePlateforme; i++) {
+				} else if (
+					/* Si on est pas sur le meme etage que lode runner
+				 on veux choisir un cote ou aller si on ne bouge pas (au hazard)
+				 Si on attein une echelle, on verifie la position du lode runner pour decider d'y monter ou d'y descendre
+				 Si on ne peux pas monter descendre lechelle on monte
+				*/
+					objLodeRunner.intPosYActuel - intHauteurCellule + objLodeRunner.intVitesse !=
+					objGarde1.intPosYActuel
+				) {
+					// Si on n'est pas en mouvement
 					if (
-						intPosX >= objBrique.tPos[i].x &&
-						intPosX <= objBrique.tPos[i].x + intLongueurCellule / 2 &&
-						intPosY < objBrique.tPos[i].y - intHauteurCellule
+						!objGarde1.binMovDroite &&
+						!objGarde1.binMovGauche &&
+						!objGarde1.binMovHaut &&
+						!objGarde1.binMovBas &&
+						!objGarde1.binEnChute &&
+						!objGarde1.binSurEchelle &&
+						objGarde1.objetAutour.objAPosPerso.strType != "e"
 					) {
-						intIndexObjBrique = i
-						binTrouvePlateforme = true
+						let intRanMovement = Math.floor(Math.random() * 2)
+						if (intRanMovement == 0) {
+							objGarde1.binMovGauche = true
+						} else {
+							objGarde1.binMovDroite = true
+						}
 					}
-				}
-				return intIndexObjBrique
-			}
-
-			function trouverProchainePlateformeVide(intPosX, intPosY) {
-				let intIndexObjBrique = 0
-				let binTrouvePlateforme = false
-				for (let i = 0; i < objBrique.tPos.length && !binTrouvePlateforme; i++) {
-					// Si la position du garde en Y est la meme que celle au dessus de la brique
-					if (intPosY == objBrique.tPos[i].y - intHauteurCellule) {
-						// Si le garde est sur le bord de changer de brique (pos) (a une demi cellule)
+					// Si on est en mouvement
+					else {
+						// Si il y a une echelle a la position ou en dessous du garde
 						if (
-							intPosX - (intLongueurCellule / 2 - 1) - objBrique.tPos[i].x <= intLongueurCellule &&
-							intPosX - (intLongueurCellule / 2 - 1) - objBrique.tPos[i].x >= 0
+							objGarde1.objetAutour.objAPosPerso.strType == "e" ||
+							objGarde1.objetAutour.objEnBas.strType == "e"
 						) {
-							// si la prochaine brique n'esiste pas a cette position X, on fait tomber
-							if (objBrique.tPos[i].x + intLongueurCellule != objBrique.tPos[i + 1].x) {
-								intIndexObjBrique = i
-								binTrouvePlateforme = true
+							// Si le garde est en haut du lode runner et qu'il y a une echelle en dessous
+							if (
+								objLodeRunner.intPosYActuel - intHauteurCellule + objLodeRunner.intVitesse >
+									objGarde1.intPosYActuel &&
+								objGarde1.objetAutour.objEnBas.strType == "e"
+							) {
+								if (objGarde1.objetAutour.objEnBas.strType == "e") {
+									console.log("Bas")
+									objGarde1.binMovBas = true
+									objGarde1.binMovGauche = false
+									objGarde1.binMovDroite = false
+								}
+							}
+							// si on est plus bas que le lode runner et qu'il y a une echelle pour monter
+							else if (
+								objLodeRunner.intPosYActuel - intHauteurCellule + objLodeRunner.intVitesse <
+									objGarde1.intPosYActuel &&
+								objGarde1.objetAutour.objAPosPerso.strType == "e"
+							) {
+								console.log("Huat")
+								objGarde1.binMovhaut = true
+								objGarde1.binMovGauche = false
+								objGarde1.binMovDroite = false
 							}
 						}
-						// Pour regarder a la gauche du garde
-						if (
-							intPosX +
-								(2 * intLongueurCellule - (intLongueurCellule / 2 - 1)) -
-								objBrique.tPos[i].x <=
-								intLongueurCellule &&
-							intPosX +
-								(2 * intLongueurCellule - (intLongueurCellule / 2 - 1)) -
-								objBrique.tPos[i].x >=
-								0
-						) {
-							if (objBrique.tPos[i].x - intLongueurCellule != objBrique.tPos[i - 1].x) {
-								intIndexObjBrique = i
-								binTrouvePlateforme = true
-							}
-						}
 					}
 				}
 
-				return intIndexObjBrique
-			}
-
-			function trouverProchaineEchelle(intPosX, intPosY) {
-				let intIndexObjEchelle = 0
-				let binTrouveEchelle = false
-				for (let i = 0; i < objEchelle.tPos.length && !binTrouveEchelle; i++) {
-					// Si la position du garde en Y est la meme que celle au dessus de l'echelle
-					if (intPosY == objEchelle.tPos[i].y - intHauteurCellule) {
-						if (
-							objEchelle.tPos[i].x + intLongueurCellule - intPosX <= 2 * intLongueurCellule &&
-							objEchelle.tPos[i].x + intLongueurCellule - intPosX >= 0
-						) {
-							intIndexObjEchelle = i
-							console.log(i)
-							binTrouveEchelle = true
-						}
-
-						// Si le garde est sur le bord de passer sur une echelle (pos) (a une demi cellule)
-
-						// if (
-						// 	intPosX - (intLongueurCellule / 2 - 1) - objEchelle.tPos[i].x <= intLongueurCellule &&
-						// 	intPosX - (intLongueurCellule / 2 - 1) - objEchelle.tPos[i].x >= 0
-						// ) {
-						// 	// si la prochaine echelle n'esiste pas a cette position X, on fait tomber
-						// 	//if (objEchelle.tPos[i].x + intLongueurCellule != objEchelle.tPos[i + 1].x) {
-						// 	intIndexObjEchelle = i
-						// 	binTrouveEchelle = true
-						// 	//}
-						// }
-						// // Pour regarder a la gauche du garde
-						// if (
-						// 	intPosX +
-						// 		(2 * intLongueurCellule - (intLongueurCellule / 2 - 1)) -
-						// 		objEchelle.tPos[i].x <=
-						// 		intLongueurCellule &&
-						// 	intPosX +
-						// 		(2 * intLongueurCellule - (intLongueurCellule / 2 - 1)) -
-						// 		objEchelle.tPos[i].x >=
-						// 		0
-						// ) {
-						// 	if (objEchelle.tPos[i].x - intLongueurCellule != objEchelle.tPos[i - 1].x) {
-						// 		intIndexObjEchelle = i
-						// 		binTrouveEchelle = true
-						// 	}
-						// }
-					}
-				}
-				return intIndexObjEchelle
-			}
-
-			function verifierSiVaTomber(objGarde) {
-				let intPosXGarde = objGarde.intPosXActuel
-				let intPosYGarde = objGarde.intPosYActuel
-				let intIndexPosBrique = trouverProchainePlateformeVide(intPosXGarde, intPosYGarde)
-				let intIndexPosEchelle = trouverProchaineEchelle(intPosXGarde, intPosYGarde)
-				let binVaTomber = false
-
-				//console.log(objEchelle.tPos[intIndexPosEchelle].x)
-				// Verifier s'il y a une brique a droite
+				// Si on attrape lode runner
 				if (
-					objBrique.tPos[intIndexPosBrique].x + intLongueurCellule !=
-					objBrique.tPos[intIndexPosBrique + 1].x //&&
-					//intIndexPosEchelle == 0
+					objLodeRunner.intPosXActuel - objGarde1.intPosXActuel <= intLongueurCellule &&
+					objLodeRunner.intPosXActuel - objGarde1.intPosXActuel >= 0 &&
+					objLodeRunner.intPosYActuel - intHauteurCellule + objLodeRunner.intVitesse ==
+						objGarde1.intPosYActuel
 				) {
-					binVaTomber = true
+					console.log("Game Over")
+					objGarde1.binMovDroite = false
+					objGarde1.binMovGauche = false
+					objGarde1.binMovHaut = false
+					objGarde1.binMovBas = false
 				}
-				// else if (
-				// 	intIndexPosBrique != 0 &&
-				// 	objBrique.tPos[intIndexPosBrique].x + intLongueurCellule !=
-				// 		objBrique.tPos[intIndexPosBrique + 2].x &&
-				// 	intIndexPosEchelle == 0
-				// ) {
-				// 	binVaTomber = true
-				// }
-
-				// if (
-
-				// ) {
-				// 	binVaTomber = false
-				// }
-
-				// Verifier s'il y a une brique a gauche gauche
-				if (
-					intIndexPosBrique != 0 &&
-					objBrique.tPos[intIndexPosBrique].x - intLongueurCellule !=
-						objBrique.tPos[intIndexPosBrique - 1].x
-				) {
-					binVaTomber = true
-				}
-
-				return binVaTomber
 			}
 		</script>
 	</head>
@@ -796,8 +946,8 @@
 				width="1400"
 				height="680"
 				tabindex="1"
-				onkeydown="mouvementLoneRunner(); return false"
-				onkeyup="objLodeRunner.binMovGauche = false; objLodeRunner.binMovDroite = false"
+				onkeydown="mouvementPerso();"
+				onkeyup="arreterMouvementPerso()"
 			>
 				Votre navigateur ne supporte pas la balise canvas
 			</canvas>
