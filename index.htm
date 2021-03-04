@@ -152,8 +152,8 @@
 
 			const initGardes = () => {
 				objGarde1 = new Object()
-				objGarde1.intPosXActuel = 22 * intLongueurCellule
-				objGarde1.intPosYActuel = 12 * intHauteurCellule
+				objGarde1.intPosXActuel = 2 * intLongueurCellule
+				objGarde1.intPosYActuel = 14 * intHauteurCellule
 				objGarde1.strCouleur = "red"
 				objGarde1.intVitesse = intVitesse
 				objGarde1.intScaleX = 1
@@ -792,6 +792,17 @@
 						objPerso.binSurEchelle = false
 					}
 				}
+				// console.log(
+				// 	objGarde1.binMovGauche +
+				// 		", " +
+				// 		objGarde1.binMovDroite +
+				// 		", " +
+				// 		objGarde1.binMovHaut +
+				// 		", " +
+				// 		objGarde1.binMovBas +
+				// 		", " +
+				// 		objGarde1.binSurEchelle
+				// )
 			}
 
 			const mouvementPerso = () => {
@@ -890,8 +901,28 @@
 					}
 					// Si on est en mouvement
 					else {
-						// Si il y a une echelle a la position ou en dessous du garde
+						// Si on est contre un mur a droite
 						if (
+							(objGarde1.objetAutour.objADroite.strType == "b" &&
+								objGarde1.intPosXActuel + intLongueurCellule ==
+									objGarde1.objetAutour.objADroite.intX) ||
+							objGarde1.intPosXActuel + intLongueurCellule == objCanvas.width + 10
+						) {
+							objGarde1.binMovDroite = false
+							objGarde1.binMovGauche = true
+						}
+						// si on est contre un mur a gauche
+						else if (
+							(objGarde1.objetAutour.objAGauche.strType == "b" &&
+								objGarde1.intPosXActuel ==
+									objGarde1.objetAutour.objAGauche.intX + intLongueurCellule) ||
+							objGarde1.intPosXActuel == -5
+						) {
+							objGarde1.binMovDroite = true
+							objGarde1.binMovGauche = false
+						}
+						// Si il y a une echelle a la position ou en dessous du garde
+						else if (
 							objGarde1.objetAutour.objAPosPerso.strType == "e" ||
 							objGarde1.objetAutour.objEnBas.strType == "e"
 						) {
@@ -902,7 +933,6 @@
 								objGarde1.objetAutour.objEnBas.strType == "e"
 							) {
 								if (objGarde1.objetAutour.objEnBas.strType == "e") {
-									console.log("Bas")
 									objGarde1.binMovBas = true
 									objGarde1.binMovGauche = false
 									objGarde1.binMovDroite = false
@@ -914,10 +944,9 @@
 									objGarde1.intPosYActuel &&
 								objGarde1.objetAutour.objAPosPerso.strType == "e"
 							) {
-								console.log("Huat")
-								objGarde1.binMovhaut = true
 								objGarde1.binMovGauche = false
 								objGarde1.binMovDroite = false
+								objGarde1.binMovHaut = true
 							}
 						}
 					}
