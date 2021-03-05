@@ -432,6 +432,7 @@
 			objLodeRunner.binSurBarre = false;
 			objLodeRunner.binEnChute = false;
 			objLodeRunner.objetAutour = {};
+			objLodeRunner.intOrRecolter = 0;
 		}
 
 		const touverObjetAutourLodeRunner = () => {
@@ -677,8 +678,18 @@
 		}
 
 		function mettreAJourAnimationLodeRunner() {
-			touverObjetAutourLodeRunner();
+			try {
+				touverObjetAutourLodeRunner();
+			}
+			catch{}
 			//chute
+			if (objLodeRunner.intOrRecolter == 6){
+				for (i=0; i<4; i++){
+					tTableauDeJeu[i][18] = 'e';
+					objEchelle.tPos.push({x: 18 * intLongueurCellule, y: i *intHauteurCellule})
+				}
+				objLodeRunner.intOrRecolter ++;
+			}
 			if (objLodeRunner.objetAutour.objAPosLodeRunner.strType == 'b' || (objLodeRunner.objetAutour.objEnHaut.strType == 'b' && objLodeRunner.intPosYActuel + intHauteurCellule < objLodeRunner.objetAutour.objEnHaut.strType + intHauteurCellule)) {
 				console.log('game over');
 			}
@@ -693,6 +704,7 @@
 						objBarreInfo.intScore += 250;
 						tTableauDeJeu[objOr.tPos[i].y / intHauteurCellule][objOr.tPos[i].x / intLongueurCellule] = ' ';
 						objOr.tPos.splice(i, 1);
+						objLodeRunner.intOrRecolter ++;
 					}
 				}
 			}
@@ -893,7 +905,10 @@
 		}
 
 		const mettreAJourAnimPerso = (objPerso) => {
-			trouverObjetAutourPerso(objPerso)
+			try {
+				trouverObjetAutourPerso(objPerso)
+			}
+			catch{}
 
 			if (objPerso.objetAutour.objAPosPerso.strType == 'o' && !objPerso.binPossedeOr) {
 				for (i = 0; i < objOr.tPos.length; i++) {
@@ -911,6 +926,7 @@
 						objPerso.binDansTrou = true;
 						objPerso.objDateTempsTrou = new Date();
 						objPerso.tPosTrou = [objBrique.tPos[i].x, objBrique.tPos[i].y]
+						objPerso.intPosXActuel = objBrique.tPos[i].x;
 						objPerso.intIndexTPosBriqueTrou = i;
 						tTableauDeJeu[objBrique.tPos[i].y / intHauteurCellule][objBrique.tPos[i].x / intLongueurCellule] = 'b';
 						if (objPerso.binPossedeOr){
@@ -928,7 +944,7 @@
 					objPerso.binDansTrou = false;
 					objPerso.objDateTempsTrou = null;
 					objPerso.tPosTrou = [];
-					objPerso.intPosXActuel = Math.floor(Math.random() * 14) * intLongueurCellule;
+					objPerso.intPosXActuel = Math.floor(Math.random() * 27) * intLongueurCellule;
 					objPerso.intPosYActuel = intHauteurCellule - objPerso.intVitesse;
 					objBarreInfo.intScore += 75;
 				}
