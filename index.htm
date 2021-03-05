@@ -186,6 +186,7 @@
 			objGarde1.objDateTempsTrou = null
 			objGarde1.binPossedeOr = false
 			objGarde1.tPosTrou = []
+			objGarde1.intIndexTPosBriqueTrou = null;
 			objGarde1.objetAutour = {}
 
 			objGarde2 = new Object()
@@ -205,6 +206,7 @@
 			objGarde2.objDateTempsTrou = null
 			objGarde2.binPossedeOr = false
 			objGarde2.tPosTrou = []
+			objGarde2.intIndexTPosBriqueTrou = null;
 			objGarde2.objetAutour = {}
 
 			objGarde3 = new Object()
@@ -224,6 +226,7 @@
 			objGarde3.objDateTempsTrou = null
 			objGarde3.binPossedeOr = false
 			objGarde3.tPosTrou = []
+			objGarde3.intIndexTPosBriqueTrou = null;
 			objGarde3.objetAutour = {}
 		}
 
@@ -908,18 +911,28 @@
 						objPerso.binDansTrou = true;
 						objPerso.objDateTempsTrou = new Date();
 						objPerso.tPosTrou = [objBrique.tPos[i].x, objBrique.tPos[i].y]
+						objPerso.intIndexTPosBriqueTrou = i;
 						tTableauDeJeu[objBrique.tPos[i].y / intHauteurCellule][objBrique.tPos[i].x / intLongueurCellule] = 'b';
 						if (objPerso.binPossedeOr){
 							objOr.tPos.push({x: objPerso.objetAutour.objEnHaut.intX,y: objPerso.objetAutour.objEnHaut.intY})
 							tTableauDeJeu[objPerso.objetAutour.objEnHaut.intY / intHauteurCellule][objPerso.objetAutour.objEnHaut.intX / intLongueurCellule] = 'o';
 							objPerso.binPossedeOr = false;
 						}
+						objBarreInfo.intScore += 75;
 					}
 				}
 			}
 
 			if (objPerso.binDansTrou){
-				if (objDate - objPerso.objDateTempsTrou >= 4000){
+				if (objDate - objBrique.tPos[objPerso.intIndexTPosBriqueTrou].objDateTrou >= 8000){
+					objPerso.binDansTrou = false;
+					objPerso.objDateTempsTrou = null;
+					objPerso.tPosTrou = [];
+					objPerso.intPosXActuel = Math.floor(Math.random() * 14) * intLongueurCellule;
+					objPerso.intPosYActuel = intHauteurCellule - objPerso.intVitesse;
+					objBarreInfo.intScore += 75;
+				}
+				else if (objDate - objPerso.objDateTempsTrou >= 4000){
 					objPerso.binDansTrou = false;
 					objPerso.objDateTempsTrou = null;
 					tTableauDeJeu[objPerso.tPosTrou[1] / intHauteurCellule][objPerso.tPosTrou[0] / intLongueurCellule] = ' ';
