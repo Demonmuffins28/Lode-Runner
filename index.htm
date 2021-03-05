@@ -181,6 +181,10 @@
 			objGarde1.binSurEchelle = false
 			objGarde1.binSurBarre = false
 			objGarde1.binEnChute = false
+			objGarde1.binDansTrou = false
+			objGarde1.objDateTempsTrou = null
+			objGarde1.binPossedeOr = false
+			objGarde1.tPosTrou = []
 			objGarde1.objetAutour = {}
 
 			objGarde2 = new Object()
@@ -196,6 +200,10 @@
 			objGarde2.binSurEchelle = false
 			objGarde2.binSurBarre = false
 			objGarde2.binEnChute = false
+			objGarde2.binDansTrou = false
+			objGarde2.objDateTempsTrou = null
+			objGarde2.binPossedeOr = false
+			objGarde2.tPosTrou = []
 			objGarde2.objetAutour = {}
 
 			objGarde3 = new Object()
@@ -211,6 +219,10 @@
 			objGarde3.binSurEchelle = false
 			objGarde3.binSurBarre = false
 			objGarde3.binEnChute = false
+			objGarde3.binDansTrou = false
+			objGarde3.objDateTempsTrou = null
+			objGarde3.binPossedeOr = false
+			objGarde3.tPosTrou = []
 			objGarde3.objetAutour = {}
 		}
 
@@ -243,14 +255,13 @@
 
 		const dessiner = () => {
 			dessinerFond()
-			dessinerBrique()
 			dessinerEchelle()
 			dessinerBarreFranchissement()
 			dessinerOr()
 			dessinerLodeRunner()
+			dessinerGardes()
 			dessinerBrique()
 			dessinerBarreInfo()
-			dessinerGardes()
 		}
 
 
@@ -876,6 +887,31 @@
 
 		const mettreAJourAnimPerso = (objPerso) => {
 			trouverObjetAutourPerso(objPerso)
+
+			if (objPerso.objetAutour.objAPosPerso.strType == 'o' && !objPerso.binPossedeOr) {
+				for (i = 0; i < objOr.tPos.length; i++) {
+					if (objOr.tPos[i].x == objPerso.objetAutour.objAPosPerso.intX && objOr.tPos[i].y == objPerso.objetAutour.objAPosPerso.intY) {
+						objOr.tPos.splice(i, 1);
+						objPerso.binPossedeOr = true;
+					}
+				}
+			}
+
+			if (objPerso.objetAutour.objAPosPerso.strType == ' ' && !objPerso.binDansTrou){
+				for (i = 0; i < objBrique.tPos.length; i++) {
+					if (objBrique.tPos[i].x == objPerso.objetAutour.objAPosPerso.intX && objBrique.tPos[i].y == objPerso.objetAutour.objAPosPerso.intY){
+						objPerso.binDansTrou = true;
+						objPerso.tPosTrou = [objBrique.tPos[i].x, objBrique.tPos[i].y]
+						tTableauDeJeu[objBrique.tPos[i].y / intHauteurCellule][objBrique.tPos[i].x / intLongueurCellule] = 'b';
+					}
+				}
+			}
+
+			if (objPerso.binDansTrou){
+				objPerso.binMovDroite = false
+				objPerso.binMovGauche = false
+			}
+
 			if (
 				objPerso.binSurBarre &&
 				objPerso.binMovBas &&
@@ -886,7 +922,7 @@
 			}
 
 			if (
-				((objPerso.objetAutour.objEnBas.strType == " " ||
+				(((objPerso.objetAutour.objEnBas.strType == " " ||
 					objPerso.objetAutour.objEnBas.strType == "f" ||
 					objPerso.objetAutour.objEnBas.strType == "o") &&
 					((objPerso.intPosXActuel >= objPerso.objetAutour.objAPosPerso.intX &&
@@ -894,7 +930,7 @@
 						(objPerso.intPosXActuel <= objPerso.objetAutour.objAPosPerso.intX &&
 							objPerso.intScaleX == -1)) &&
 					!objPerso.binSurBarre) ||
-				objPerso.binEnChute
+				objPerso.binEnChute) && !objPerso.binDansTrou
 			) {
 				// S'il y a un bloc ou une echelle en dessous, ne chute pas
 				if (
