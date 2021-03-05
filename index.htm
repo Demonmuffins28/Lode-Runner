@@ -214,14 +214,6 @@
 			const mettreAJourAnimation = () => {
 				mettreAJourAnimationLoneRunner()
 				algorithmeGarde()
-				// console.log(
-				// 	"Rouge: " +
-				// 		objGarde1.binMovBas +
-				// 		" Vert: " +
-				// 		objGarde2.binSurEchelle +
-				// 		" Mauve: " +
-				// 		objGarde3.binSurEchelle
-				// )
 			}
 
 			const arreterAnimation = () => {
@@ -782,52 +774,6 @@
 						objPerso.binMovBas = false
 					}
 				}
-				// console.log(
-				// 	objGarde1.binMovGauche +
-				// 		", " +
-				// 		objGarde1.binMovDroite +
-				// 		", " +
-				// 		objGarde1.binMovHaut +
-				// 		", " +
-				// 		objGarde1.binMovBas +
-				// 		", " +
-				// 		objGarde1.binSurEchelle
-				// )
-			}
-
-			const mouvementPerso = () => {
-				objPerso = objGarde1
-				switch (event.keyCode) {
-					case 37:
-						objPerso.binMovGauche = true
-						break
-					case 39:
-						objPerso.binMovDroite = true
-						break
-					case 38:
-						objPerso.binMovHaut = true
-						break
-					case 40:
-						objPerso.binMovBas = true
-						break
-				}
-			}
-			const arreterMouvementPerso = () => {
-				objPerso = objGarde1
-				switch (event.keyCode) {
-					case 37:
-						objPerso.binMovGauche = false
-						break
-					case 39:
-						objPerso.binMovDroite = false
-						break
-					case 38:
-						objPerso.binMovHaut = false
-						break
-					case 40:
-						objPerso.binMovBas = false
-						break
-				}
 			}
 
 			const algorithmeGarde = () => {
@@ -842,13 +788,6 @@
 					}
 					mettreAJourAnimPerso(objGarde)
 
-					// console.log(
-					// 	objLodeRunner.intPosYActuel -
-					// 		intHauteurCellule +
-					// 		objLodeRunner.intVitesse +
-					// 		", " +
-					// 		objGarde1.intPosYActuel
-					// )
 					// Si le garde est au meme etage que lodeRunner
 					if (
 						objLodeRunner.intPosYActuel - intHauteurCellule + objLodeRunner.intVitesse ==
@@ -859,6 +798,7 @@
 							objLodeRunner.intPosXActuel - (objGarde.intPosXActuel + intLongueurCellule / 2) >
 							0
 						) {
+							objGarde.binSurEchelle = false
 							objGarde.binMovGauche = false
 							objGarde.binMovHaut = false
 							objGarde.binMovBas = false
@@ -869,9 +809,9 @@
 							objLodeRunner.intPosXActuel - (objGarde.intPosXActuel + intLongueurCellule / 2) <
 							0
 						) {
+							objGarde.binSurEchelle = false
 							objGarde.binMovDroite = false
 							objGarde.binMovHaut = false
-							objGarde.binMovBas = false
 							objGarde.binMovGauche = true
 						}
 					} else if (
@@ -970,21 +910,12 @@
 						objGarde.binMovBas = false
 					}
 				}
-
-				console.log(objGarde1.objetAutour.objEnBas.strType)
 			}
 		</script>
 	</head>
 	<body onload="initAnimation()">
 		<main class="sLargeurDiv sCorps">
-			<canvas
-				id="monCanvas"
-				width="1400"
-				height="680"
-				tabindex="1"
-				onkeydown="mouvementPerso();"
-				onkeyup="arreterMouvementPerso()"
-			>
+			<canvas id="monCanvas" width="1400" height="680">
 				Votre navigateur ne supporte pas la balise canvas
 			</canvas>
 		</main>
