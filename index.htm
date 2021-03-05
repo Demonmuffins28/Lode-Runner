@@ -470,7 +470,7 @@
 				objLodeRunner.intPosXActuel =
 					10 * intLongueurCellule - intLongueurCellule / 2 + intLongueurCellule / 2
 				objLodeRunner.intPosYActuel =
-					14 * intHauteurCellule + intHauteurCellule - objLodeRunner.intHauteurParRapportSol
+					1 * intHauteurCellule + intHauteurCellule - objLodeRunner.intHauteurParRapportSol
 				objLodeRunner.intVitesse = intVitesse
 				objLodeRunner.intScaleX = 1
 				objLodeRunner.binMovGauche = false
@@ -1277,6 +1277,12 @@
 								}
 							}
 						}
+					}
+
+					// Bug reparer quand arrive en haut de l'echelle gauche
+					if (objGarde.intPosYActuel <= 40) {
+						objGarde.intPosYActuel = intHauteurCellule
+						objGarde.binMovHaut = false
 					}
 
 					// Si on attrape lode runner
