@@ -678,10 +678,7 @@
 		}
 
 		function mettreAJourAnimationLodeRunner() {
-			try {
-				touverObjetAutourLodeRunner();
-			}
-			catch{}
+			touverObjetAutourLodeRunner();
 			//chute
 			if (objLodeRunner.intOrRecolter == 6){
 				for (i=0; i<4; i++){
@@ -905,10 +902,7 @@
 		}
 
 		const mettreAJourAnimPerso = (objPerso) => {
-			try {
-				trouverObjetAutourPerso(objPerso)
-			}
-			catch{}
+			trouverObjetAutourPerso(objPerso)
 
 			if (objPerso.objetAutour.objAPosPerso.strType == 'o' && !objPerso.binPossedeOr) {
 				for (i = 0; i < objOr.tPos.length; i++) {
