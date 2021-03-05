@@ -15,8 +15,8 @@
 			let objCycleAnimation = null
 			let intHauteurCellule = null
 			let intLongueurCellule = null
-			let intHauteurCanvasJeu = null;
-			const intHauteurBarreInfo = 55;
+			let intHauteurCanvasJeu = null
+			const intHauteurBarreInfo = 55
 
 			let objBrique = null
 			let objEchelle = null
@@ -24,15 +24,15 @@
 			let objBarreFranchissement = null
 			let objImageOr = null
 			let objOr = null
-			let objBarreInfo = null;
+			let objBarreInfo = null
 
-			let objDate = null;
+			let objDate = null
 			const intVitesse = 2.5
 
 			let objLodeRunner = null
-				let objGarde1 = null
-				let objGarde2 = null
-				let objGarde3 = null
+			let objGarde1 = null
+			let objGarde2 = null
+			let objGarde3 = null
 
 			/*
 							' ' = case vide (espace dans les guillemets)
@@ -64,10 +64,10 @@
 			]
 
 			const initAnimation = () => {
-				objCanvas = document.getElementById('monCanvas')
+				objCanvas = document.getElementById("monCanvas")
 				objCanvas.focus()
-				objC2D = objCanvas.getContext('2d')
-				intHauteurCanvasJeu = objCanvas.height - intHauteurBarreInfo;
+				objC2D = objCanvas.getContext("2d")
+				intHauteurCanvasJeu = objCanvas.height - intHauteurBarreInfo
 				intLongueurCellule = objCanvas.width / 28
 				intHauteurCellule = intHauteurCanvasJeu / 17
 				initFond()
@@ -85,44 +85,44 @@
 			}
 
 			const initBarreInfo = () => {
-					objBarreInfo = new Object();
-					objBarreInfo.intX = 0;
-					objBarreInfo.intY = intHauteurCanvasJeu;
-					objBarreInfo.intHauteur = intHauteurBarreInfo;
-					objBarreInfo.intLongueur = objCanvas.width;
-					objBarreInfo.intScore = 0;
-					objBarreInfo.strCouleurFond = 'black';
-					objBarreInfo.strCouleurBordureEtTexte = 'red';
+				objBarreInfo = new Object()
+				objBarreInfo.intX = 0
+				objBarreInfo.intY = intHauteurCanvasJeu
+				objBarreInfo.intHauteur = intHauteurBarreInfo
+				objBarreInfo.intLongueur = objCanvas.width
+				objBarreInfo.intScore = 0
+				objBarreInfo.strCouleurFond = "black"
+				objBarreInfo.strCouleurBordureEtTexte = "red"
 			}
 
 			const initFond = () => {
 				objFond = new Object()
-				objFond.strCouleur = 'black'
+				objFond.strCouleur = "black"
 			}
 
 			const initBrique = () => {
 				objBrique = new Object()
 				objBrique.tPos = []
-				objBrique.strCouleurBrique = 'red'
-				objBrique.strCouleurCiment = 'gray'
+				objBrique.strCouleurBrique = "red"
+				objBrique.strCouleurCiment = "gray"
 			}
 
 			const initEchelle = () => {
 				// 50 x 40
 				objEchelle = new Object()
 				objEchelle.tPos = []
-				objEchelle.strCouleur = '#87542D'
+				objEchelle.strCouleur = "#87542D"
 			}
 
 			const initBarreFranchissement = () => {
 				objBarreFranchissement = new Object()
 				objBarreFranchissement.tPos = []
-				objBarreFranchissement.strCouleur = 'orange'
+				objBarreFranchissement.strCouleur = "orange"
 			}
 
 			const initOr = () => {
 				objImageOr = new Image()
-				objImageOr.src = 'Images/tresor.png'
+				objImageOr.src = "Images/tresor.png"
 
 				objOr = new Object()
 				objOr.tPos = []
@@ -133,27 +133,27 @@
 				for (let i = 0; i < tTableauDeJeu.length; i++) {
 					for (let j = 0; j < tTableauDeJeu[i].length; j++) {
 						switch (tTableauDeJeu[i][j]) {
-							case 'b':
+							case "b":
 								objBrique.tPos.push({
 									x: j * intLongueurCellule,
 									y: i * intHauteurCellule,
 									binTrou: false,
-									objDateTrou: null
+									objDateTrou: null,
 								})
 								break
-							case 'e':
+							case "e":
 								objEchelle.tPos.push({
 									x: j * intLongueurCellule,
 									y: i * intHauteurCellule,
 								})
 								break
-							case 'f':
+							case "f":
 								objBarreFranchissement.tPos.push({
 									x: j * intLongueurCellule,
 									y: i * intHauteurCellule,
 								})
 								break
-							case 'o':
+							case "o":
 								objOr.tPos.push({
 									x: j * intLongueurCellule,
 									y: i * intHauteurCellule,
@@ -212,337 +212,345 @@
 					objGarde3.objetAutour = {}
 				}
 
+				const animer = () => {
+					// Requête pour le prochain cycle
+					objCycleAnimation = requestAnimationFrame(animer)
 
-			const animer = () => {
-				// Requête pour le prochain cycle
-				objCycleAnimation = requestAnimationFrame(animer)
+					// Le cycle d'animation
+					effacerDessin()
+					mettreAJourAnimation()
+					dessiner()
+				}
 
-				// Le cycle d'animation
-				effacerDessin()
-				mettreAJourAnimation()
-				dessiner()
-			}
+				const effacerDessin = () => {
+					objC2D.clearRect(0, 0, objCanvas.width, intHauteurCanvasJeu)
+				}
 
-			const effacerDessin = () => {
-				objC2D.clearRect(0, 0, objCanvas.width, intHauteurCanvasJeu)
-			}
+				const mettreAJourAnimation = () => {
+					objDate = new Date()
+					mettreAJourAnimationLodeRunner()
+					algorithmeGarde()
+					mettreAJourObjBrique()
+				}
 
-			const mettreAJourAnimation = () => {
-				objDate = new Date()
-				mettreAJourAnimationLodeRunner()
-				algorithmeGarde()
-				mettreAJourObjBrique()
-			}
+				const arreterAnimation = () => {
+					if (objCycleAnimation != null) cancelAnimationFrame(objCycleAnimation)
+					objCycleAnimation = null
+				}
 
-			const arreterAnimation = () => {
-				if (objCycleAnimation != null) cancelAnimationFrame(objCycleAnimation)
-				objCycleAnimation = null
-			}
+				const dessiner = () => {
+					dessinerFond()
+					dessinerBrique()
+					dessinerEchelle()
+					dessinerBarreFranchissement()
+					dessinerOr()
+					dessinerLodeRunner()
+					dessinerBrique()
+					dessinerBarreInfo()
+					dessinerGardes()
+				}
 
-			const dessiner = () => {
-				dessinerFond()
-				dessinerBrique()
-				dessinerEchelle()
-				dessinerBarreFranchissement()
-				dessinerOr()
-				dessinerLodeRunner()
-				dessinerBrique()
-				dessinerBarreInfo()
-				dessinerGardes()
-			}
+				const dessinerBarreInfo = () => {
+					objC2D.save()
+					objC2D.translate(objBarreInfo.intX, objBarreInfo.intY)
+					objC2D.fillStyle = objBarreInfo.strCouleurFond
+					objC2D.strokeStyle = objBarreInfo.strCouleurBordureEtTexte
+					objC2D.lineWidth = 3
+					objC2D.fillRect(0, 0, objBarreInfo.intLongueur, objBarreInfo.intHauteur)
+					objC2D.strokeRect(0, 0, objBarreInfo.intLongueur, objBarreInfo.intHauteur)
 
+					objC2D.fillStyle = objBarreInfo.strCouleurBordureEtTexte
+					objC2D.font = "30px Arial"
+					objC2D.textBaseline = "middle"
+					objC2D.fillText("Score: " + objBarreInfo.intScore, 10, objBarreInfo.intHauteur / 2)
+					objC2D.restore()
+				}
 
-			const dessinerBarreInfo = () => {
-					objC2D.save();
-					objC2D.translate(objBarreInfo.intX, objBarreInfo.intY);
-					objC2D.fillStyle = objBarreInfo.strCouleurFond;
-					objC2D.strokeStyle = objBarreInfo.strCouleurBordureEtTexte;
-					objC2D.lineWidth = 3;
-					objC2D.fillRect(0, 0, objBarreInfo.intLongueur, objBarreInfo.intHauteur);
-					objC2D.strokeRect(0, 0, objBarreInfo.intLongueur, objBarreInfo.intHauteur);
+				const dessinerFond = () => {
+					objC2D.save()
+					objC2D.beginPath()
+					objC2D.fillStyle = objFond.strCouleur
+					objC2D.rect(0, 0, objCanvas.width, intHauteurCanvasJeu)
+					objC2D.fill()
+					objC2D.restore()
+				}
 
-					objC2D.fillStyle = objBarreInfo.strCouleurBordureEtTexte;
-					objC2D.font = "30px Arial";
-					objC2D.textBaseline = 'middle';
-					objC2D.fillText("Score: " + objBarreInfo.intScore, 10, objBarreInfo.intHauteur/2);
-					objC2D.restore();
-			}
+				const dessinerBrique = () => {
+					objC2D.save()
+					for (let index = 0; index < objBrique.tPos.length; index++) {
+						if (!objBrique.tPos[index].binTrou) {
+							let intPosXActuel = objBrique.tPos[index].x
+							let intPosYActuel = objBrique.tPos[index].y
 
-			const dessinerFond = () => {
-				objC2D.save()
-				objC2D.beginPath()
-				objC2D.fillStyle = objFond.strCouleur
-				objC2D.rect(0, 0, objCanvas.width, intHauteurCanvasJeu)
-				objC2D.fill()
-				objC2D.restore()
-			}
+							objC2D.fillStyle = "red"
+							objC2D.beginPath()
+							objC2D.rect(intPosXActuel, intPosYActuel, intLongueurCellule, intHauteurCellule)
+							objC2D.fill()
 
-			const dessinerBrique = () => {
-				objC2D.save()
-				for (let index = 0; index < objBrique.tPos.length; index++) {
-					if (!objBrique.tPos[index].binTrou) {
-						let intPosXActuel = objBrique.tPos[index].x
-						let intPosYActuel = objBrique.tPos[index].y
+							objC2D.strokeStyle = "gray"
+							objC2D.lineWidth = 3
+							objC2D.beginPath()
+							objC2D.moveTo(intPosXActuel, intPosYActuel)
+							objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel)
+							objC2D.moveTo(intPosXActuel, intPosYActuel + intHauteurCellule)
+							objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + intHauteurCellule)
+							objC2D.moveTo(
+								intPosXActuel + intLongueurCellule / 3,
+								intPosYActuel + intHauteurCellule
+							)
+							objC2D.lineTo(
+								intPosXActuel + intLongueurCellule / 3,
+								intPosYActuel + intHauteurCellule / 2
+							)
+							objC2D.moveTo(intPosXActuel + (2 * intLongueurCellule) / 3, intPosYActuel)
+							objC2D.lineTo(
+								intPosXActuel + (2 * intLongueurCellule) / 3,
+								intPosYActuel + intHauteurCellule / 2
+							)
+							objC2D.stroke()
 
-						objC2D.fillStyle = 'red'
-						objC2D.beginPath()
-						objC2D.rect(intPosXActuel, intPosYActuel, intLongueurCellule, intHauteurCellule)
-						objC2D.fill()
+							objC2D.strokeStyle = "gray"
+							objC2D.lineWidth = 5
+							objC2D.beginPath()
+							objC2D.moveTo(intPosXActuel, intPosYActuel + intHauteurCellule / 2)
+							objC2D.lineTo(
+								intPosXActuel + intLongueurCellule,
+								intPosYActuel + intHauteurCellule / 2
+							)
+							objC2D.stroke()
+						}
+					}
+					objC2D.restore()
+				}
 
-						objC2D.strokeStyle = 'gray'
-						objC2D.lineWidth = 3
-						objC2D.beginPath()
-						objC2D.moveTo(intPosXActuel, intPosYActuel)
-						objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel)
-						objC2D.moveTo(intPosXActuel, intPosYActuel + intHauteurCellule)
-						objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + intHauteurCellule)
-						objC2D.moveTo(intPosXActuel + intLongueurCellule / 3, intPosYActuel + intHauteurCellule)
-						objC2D.lineTo(
-							intPosXActuel + intLongueurCellule / 3,
-							intPosYActuel + intHauteurCellule / 2
-						)
-						objC2D.moveTo(intPosXActuel + (2 * intLongueurCellule) / 3, intPosYActuel)
-						objC2D.lineTo(
-							intPosXActuel + (2 * intLongueurCellule) / 3,
-							intPosYActuel + intHauteurCellule / 2
-						)
-						objC2D.stroke()
+				const mettreAJourObjBrique = () => {
+					for (i = 0; i < objBrique.tPos.length; i++) {
+						if (objBrique.tPos[i].binTrou && objDate - objBrique.tPos[i].objDateTrou > 8000) {
+							objBrique.tPos[i].binTrou = false
+							objBrique.tPos[i].objDateTrou = null
+							tTableauDeJeu[objBrique.tPos[i].y / intHauteurCellule][
+								objBrique.tPos[i].x / intLongueurCellule
+							] = "b"
+						}
+					}
+				}
 
-						objC2D.strokeStyle = 'gray'
+				const dessinerEchelle = () => {
+					objC2D.save()
+					for (let index = 0; index < objEchelle.tPos.length; index++) {
+						let intPosXActuel = objEchelle.tPos[index].x
+						let intPosYActuel = objEchelle.tPos[index].y
+
+						objC2D.strokeStyle = objEchelle.strCouleur
 						objC2D.lineWidth = 5
 						objC2D.beginPath()
-						objC2D.moveTo(intPosXActuel, intPosYActuel + intHauteurCellule / 2)
-						objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + intHauteurCellule / 2)
+						// bareau de gauche
+						objC2D.moveTo(intPosXActuel + 2.5, intPosYActuel - 1.5)
+						objC2D.lineTo(intPosXActuel + 2.5, intPosYActuel + intHauteurCellule - 1)
+						objC2D.stroke()
+						// bareau de droite
+						objC2D.moveTo(intPosXActuel + intLongueurCellule - 2.5, intPosYActuel - 1.5)
+						objC2D.lineTo(
+							intPosXActuel + intLongueurCellule - 2.5,
+							intPosYActuel + intHauteurCellule - 1
+						)
+						objC2D.stroke()
+						objC2D.lineWidth = 2
+						// bareau du haut et les autres en dessous
+						objC2D.moveTo(intPosXActuel, intPosYActuel + 2)
+						objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + 2)
+						objC2D.moveTo(intPosXActuel, intPosYActuel + 12)
+						objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + 12)
+						objC2D.moveTo(intPosXActuel, intPosYActuel + 22)
+						objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + 22)
+						objC2D.moveTo(intPosXActuel, intPosYActuel + 32)
+						objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + 32)
+						objC2D.stroke()
+					}
+					let intPosXActuel = objEchelle.tPos[0].x
+					let intPosYActuel = objEchelle.tPos[0].y
+
+					objC2D.restore()
+				}
+
+				const dessinerBarreFranchissement = () => {
+					objC2D.save()
+					for (let index = 0; index < objBarreFranchissement.tPos.length; index++) {
+						let intPosXActuel = objBarreFranchissement.tPos[index].x
+						let intPosYActuel = objBarreFranchissement.tPos[index].y
+
+						objC2D.strokeStyle = objBarreFranchissement.strCouleur
+						objC2D.lineWidth = 2
+						objC2D.beginPath()
+						objC2D.moveTo(intPosXActuel, intPosYActuel + 10)
+						objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + 10)
 						objC2D.stroke()
 					}
 				}
-				objC2D.restore()
-			}
 
-			const mettreAJourObjBrique = () => {
-				for (i = 0; i < objBrique.tPos.length; i++) {
-					if (objBrique.tPos[i].binTrou && (objDate - objBrique.tPos[i].objDateTrou) > 8000) {
-						objBrique.tPos[i].binTrou = false;
-						objBrique.tPos[i].objDateTrou = null;
-						tTableauDeJeu[objBrique.tPos[i].y / intHauteurCellule][objBrique.tPos[i].x / intLongueurCellule] = 'b';
+				const dessinerOr = () => {
+					objC2D.save()
+					for (let index = 0; index < objOr.tPos.length; index++) {
+						let intPosXActuel = objOr.tPos[index].x
+						let intPosYActuel = objOr.tPos[index].y
+
+						objC2D.beginPath()
+						objC2D.drawImage(
+							objImageOr,
+							intPosXActuel + 5,
+							intPosYActuel + 15,
+							intLongueurCellule - 5,
+							intHauteurCellule - 15
+						)
+					}
+					objC2D.restore()
+				}
+
+				const initObjLodeRunner = () => {
+					objLodeRunner = new Object()
+					objLodeRunner.intHauteurParRapportSol = 2.5
+					objLodeRunner.intPosXActuel =
+						10 * intLongueurCellule - intLongueurCellule / 2 + intLongueurCellule / 2
+					objLodeRunner.intPosYActuel =
+						14 * intHauteurCellule + intHauteurCellule - objLodeRunner.intHauteurParRapportSol
+					objLodeRunner.intVitesse = intVitesse
+					objLodeRunner.intScaleX = 1
+					objLodeRunner.binMovGauche = false
+					objLodeRunner.binMovDroite = false
+					objLodeRunner.binMovHaut = false
+					objLodeRunner.binMovBas = false
+					objLodeRunner.binSurEchelle = false
+					objLodeRunner.binSurBarre = false
+					objLodeRunner.binEnChute = false
+					objLodeRunner.objetAutour = {}
+				}
+
+				const touverObjetAutourLodeRunner = () => {
+					let intX = Math.floor(objLodeRunner.intPosXActuel / intLongueurCellule)
+					let intY = Math.floor(objLodeRunner.intPosYActuel / intHauteurCellule)
+					objLodeRunner.objetAutour = {
+						objAPosLodeRunner: {
+							strType: tTableauDeJeu[intY][intX],
+							intX: intX * intLongueurCellule,
+							intY: intY * intHauteurCellule,
+						},
+						objADroite: {
+							strType: tTableauDeJeu[intY][intX + 1],
+							intX: (intX + 1) * intLongueurCellule,
+							intY: intY * intHauteurCellule,
+						},
+						objAGauche: {
+							strType: tTableauDeJeu[intY][intX - 1],
+							intX: (intX - 1) * intLongueurCellule,
+							intY: intY * intHauteurCellule,
+						},
+						objEnHaut: {
+							strType: tTableauDeJeu[intY - 1][intX],
+							intX: intX * intLongueurCellule,
+							intY: (intY - 1) * intHauteurCellule,
+						},
+						objEnBas: {
+							strType: tTableauDeJeu[intY + 1][intX],
+							intX: intX * intLongueurCellule,
+							intY: (intY + 1) * intHauteurCellule,
+						},
+						objEnBasADroite: {
+							strType: tTableauDeJeu[intY + 1][intX + 1],
+							intX: (intX + 1) * intLongueurCellule,
+							intY: (intY + 1) * intHauteurCellule,
+						},
+						objEnBasAGauche: {
+							strType: tTableauDeJeu[intY + 1][intX - 1],
+							intX: (intX - 1) * intLongueurCellule,
+							intY: (intY + 1) * intHauteurCellule,
+						},
+						objEnHautADroite: {
+							strType: tTableauDeJeu[intY - 1][intX + 1],
+							intX: (intX + 1) * intLongueurCellule,
+							intY: (intY - 1) * intHauteurCellule,
+						},
+						objEnHautAGauche: {
+							strType: tTableauDeJeu[intY - 1][intX - 1],
+							intX: (intX - 1) * intLongueurCellule,
+							intY: (intY - 1) * intHauteurCellule,
+						},
 					}
 				}
-			}
 
-			const dessinerEchelle = () => {
-				objC2D.save()
-				for (let index = 0; index < objEchelle.tPos.length; index++) {
-					let intPosXActuel = objEchelle.tPos[index].x
-					let intPosYActuel = objEchelle.tPos[index].y
+				const dessinerLodeRunner = () => {
+					objC2D.save()
+					objC2D.translate(objLodeRunner.intPosXActuel, objLodeRunner.intPosYActuel)
+					objC2D.scale(objLodeRunner.intScaleX, 1)
 
-					objC2D.strokeStyle = objEchelle.strCouleur
-					objC2D.lineWidth = 5
+					objC2D.strokeStyle = "white"
+					// pied droit
 					objC2D.beginPath()
-					// bareau de gauche
-					objC2D.moveTo(intPosXActuel + 2.5, intPosYActuel - 1.5)
-					objC2D.lineTo(intPosXActuel + 2.5, intPosYActuel + intHauteurCellule - 1)
+					objC2D.lineWidth = 6
+					objC2D.moveTo(3, 0)
+					objC2D.lineTo(3, -7)
 					objC2D.stroke()
-					// bareau de droite
-					objC2D.moveTo(intPosXActuel + intLongueurCellule - 2.5, intPosYActuel - 1.5)
-					objC2D.lineTo(
-						intPosXActuel + intLongueurCellule - 2.5,
-						intPosYActuel + intHauteurCellule - 1
-					)
-					objC2D.stroke()
-					objC2D.lineWidth = 2
-					// bareau du haut et les autres en dessous
-					objC2D.moveTo(intPosXActuel, intPosYActuel + 2)
-					objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + 2)
-					objC2D.moveTo(intPosXActuel, intPosYActuel + 12)
-					objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + 12)
-					objC2D.moveTo(intPosXActuel, intPosYActuel + 22)
-					objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + 22)
-					objC2D.moveTo(intPosXActuel, intPosYActuel + 32)
-					objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + 32)
-					objC2D.stroke()
-				}
-				let intPosXActuel = objEchelle.tPos[0].x
-				let intPosYActuel = objEchelle.tPos[0].y
-
-				objC2D.restore()
-			}
-
-			const dessinerBarreFranchissement = () => {
-				objC2D.save()
-				for (let index = 0; index < objBarreFranchissement.tPos.length; index++) {
-					let intPosXActuel = objBarreFranchissement.tPos[index].x
-					let intPosYActuel = objBarreFranchissement.tPos[index].y
-
-					objC2D.strokeStyle = objBarreFranchissement.strCouleur
-					objC2D.lineWidth = 2
+					// jambe droite
 					objC2D.beginPath()
-					objC2D.moveTo(intPosXActuel, intPosYActuel + 10)
-					objC2D.lineTo(intPosXActuel + intLongueurCellule, intPosYActuel + 10)
+					objC2D.lineWidth = 3
+					objC2D.moveTo(1.5, -7)
+					objC2D.lineTo(1.5, -11)
 					objC2D.stroke()
-				}
-			}
-
-			const dessinerOr = () => {
-				objC2D.save()
-				for (let index = 0; index < objOr.tPos.length; index++) {
-					let intPosXActuel = objOr.tPos[index].x
-					let intPosYActuel = objOr.tPos[index].y
-
+					// corps
 					objC2D.beginPath()
-					objC2D.drawImage(
-						objImageOr,
-						intPosXActuel + 5,
-						intPosYActuel + 15,
-						intLongueurCellule - 5,
-						intHauteurCellule - 15
-					)
+					objC2D.lineWidth = 7
+					objC2D.moveTo(-7 / 2, -8)
+					objC2D.lineTo(-7 / 2, -20)
+					objC2D.stroke()
+					// jambe droite
+					objC2D.beginPath()
+					objC2D.lineWidth = 4
+					objC2D.moveTo(-4, -6)
+					objC2D.lineTo(-15, -6)
+					objC2D.stroke()
+					// epaule droite
+					objC2D.beginPath()
+					objC2D.lineWidth = 3
+					objC2D.moveTo(-4, -21.5)
+					objC2D.lineTo(6, -21.5)
+					objC2D.stroke()
+					// bras droite
+					objC2D.beginPath()
+					objC2D.moveTo(6, -18.5)
+					objC2D.lineTo(11, -18.5)
+					objC2D.stroke()
+					// cou
+					objC2D.beginPath()
+					objC2D.moveTo(1, -24.5)
+					objC2D.lineTo(-7, -24.5)
+					objC2D.stroke()
+					// epaule gauche
+					objC2D.beginPath()
+					objC2D.moveTo(-7, -21.5)
+					objC2D.lineTo(-12, -21.5)
+					objC2D.stroke()
+					// bras gauche
+					objC2D.beginPath()
+					objC2D.moveTo(-10, -18.5)
+					objC2D.lineTo(-15, -18.5)
+					objC2D.stroke()
+					// tete
+					objC2D.beginPath()
+					objC2D.lineWidth = 8
+					objC2D.moveTo(0, -26)
+					objC2D.lineTo(0, -32)
+					objC2D.stroke()
+					// chapeau
+					objC2D.beginPath()
+					objC2D.strokeStyle = "cyan"
+					objC2D.lineWidth = 4
+					objC2D.moveTo(0, -32)
+					objC2D.lineTo(0, -35)
+					objC2D.stroke()
+
+					objC2D.restore()
 				}
-				objC2D.restore()
-			}
 
-			const initObjLodeRunner = () => {
-				objLodeRunner = new Object()
-				objLodeRunner.intHauteurParRapportSol = 2.5;
-				objLodeRunner.intPosXActuel = 10 * intLongueurCellule - intLongueurCellule / 2 + intLongueurCellule / 2
-				objLodeRunner.intPosYActuel = 14 * intHauteurCellule + intHauteurCellule - objLodeRunner.intHauteurParRapportSol;
-				objLodeRunner.intVitesse = intVitesse;
-				objLodeRunner.intScaleX = 1
-				objLodeRunner.binMovGauche = false
-				objLodeRunner.binMovDroite = false
-				objLodeRunner.binMovHaut = false
-				objLodeRunner.binMovBas = false
-				objLodeRunner.binSurEchelle = false;
-				objLodeRunner.binSurBarre = false;
-				objLodeRunner.binEnChute = false;
-				objLodeRunner.objetAutour = {};
-			}
-
-			const touverObjetAutourLodeRunner = () => {
-				let intX = Math.floor(objLodeRunner.intPosXActuel / intLongueurCellule);
-				let intY = Math.floor(objLodeRunner.intPosYActuel / intHauteurCellule);
-				objLodeRunner.objetAutour = {
-					objAPosLodeRunner: {
-						strType: tTableauDeJeu[intY][intX],
-						intX: (intX) * intLongueurCellule,
-						intY: (intY) * intHauteurCellule
-					},
-					objADroite: {
-						strType: tTableauDeJeu[intY][intX + 1],
-						intX: (intX + 1) * intLongueurCellule,
-						intY: (intY) * intHauteurCellule
-					},
-					objAGauche: {
-						strType: tTableauDeJeu[intY][intX - 1],
-						intX: (intX - 1) * intLongueurCellule,
-						intY: (intY) * intHauteurCellule
-					},
-					objEnHaut: {
-						strType: tTableauDeJeu[intY - 1][intX],
-						intX: (intX) * intLongueurCellule,
-						intY: (intY - 1) * intHauteurCellule
-					},
-					objEnBas: {
-						strType: tTableauDeJeu[intY + 1][intX],
-						intX: (intX) * intLongueurCellule,
-						intY: (intY + 1) * intHauteurCellule
-					},
-					objEnBasADroite: {
-						strType: tTableauDeJeu[intY + 1][intX + 1],
-						intX: (intX + 1) * intLongueurCellule,
-						intY: (intY + 1) * intHauteurCellule
-					},
-					objEnBasAGauche: {
-						strType: tTableauDeJeu[intY + 1][intX - 1],
-						intX: (intX - 1) * intLongueurCellule,
-						intY: (intY + 1) * intHauteurCellule
-					},
-					objEnHautADroite: {
-						strType: tTableauDeJeu[intY - 1][intX + 1],
-						intX: (intX + 1) * intLongueurCellule,
-						intY: (intY - 1) * intHauteurCellule
-					},
-					objEnHautAGauche: {
-						strType: tTableauDeJeu[intY - 1][intX - 1],
-						intX: (intX - 1) * intLongueurCellule,
-						intY: (intY - 1) * intHauteurCellule
-					}
-				};
-			}
-
-			const dessinerLodeRunner = () => {
-				objC2D.save()
-				objC2D.translate(objLodeRunner.intPosXActuel, objLodeRunner.intPosYActuel)
-				objC2D.scale(objLodeRunner.intScaleX, 1)
-
-				objC2D.strokeStyle = 'white'
-				// pied droit
-				objC2D.beginPath()
-				objC2D.lineWidth = 6
-				objC2D.moveTo(3, 0)
-				objC2D.lineTo(3, -7)
-				objC2D.stroke()
-				// jambe droite
-				objC2D.beginPath()
-				objC2D.lineWidth = 3
-				objC2D.moveTo(1.5, -7)
-				objC2D.lineTo(1.5, -11)
-				objC2D.stroke()
-				// corps
-				objC2D.beginPath()
-				objC2D.lineWidth = 7
-				objC2D.moveTo(-7 / 2, -8)
-				objC2D.lineTo(-7 / 2, -20)
-				objC2D.stroke()
-				// jambe droite
-				objC2D.beginPath()
-				objC2D.lineWidth = 4
-				objC2D.moveTo(-4, -6)
-				objC2D.lineTo(-15, -6)
-				objC2D.stroke()
-				// epaule droite
-				objC2D.beginPath()
-				objC2D.lineWidth = 3
-				objC2D.moveTo(-4, -21.5)
-				objC2D.lineTo(6, -21.5)
-				objC2D.stroke()
-				// bras droite
-				objC2D.beginPath()
-				objC2D.moveTo(6, -18.5)
-				objC2D.lineTo(11, -18.5)
-				objC2D.stroke()
-				// cou
-				objC2D.beginPath()
-				objC2D.moveTo(1, -24.5)
-				objC2D.lineTo(-7, -24.5)
-				objC2D.stroke()
-				// epaule gauche
-				objC2D.beginPath()
-				objC2D.moveTo(-7, -21.5)
-				objC2D.lineTo(-12, -21.5)
-				objC2D.stroke()
-				// bras gauche
-				objC2D.beginPath()
-				objC2D.moveTo(-10, -18.5)
-				objC2D.lineTo(-15, -18.5)
-				objC2D.stroke()
-				// tete
-				objC2D.beginPath()
-				objC2D.lineWidth = 8
-				objC2D.moveTo(0, -26)
-				objC2D.lineTo(0, -32)
-				objC2D.stroke()
-				// chapeau
-				objC2D.beginPath()
-				objC2D.strokeStyle = 'cyan'
-				objC2D.lineWidth = 4
-				objC2D.moveTo(0, -32)
-				objC2D.lineTo(0, -35)
-				objC2D.stroke()
-
-				objC2D.restore()
-			}
-
-			const dessinerGardes = () => {
+				const dessinerGardes = () => {
 					objC2D.save()
 					let intPosXActuel = null
 					let intPosYActuel = null
@@ -659,166 +667,235 @@
 					objC2D.restore()
 				}
 
-			function mettreAJourAnimationLodeRunner() {
-				touverObjetAutourLodeRunner();
-				//chute
-				if (objLodeRunner.objetAutour.objAPosLodeRunner.strType == 'b' || (objLodeRunner.objetAutour.objEnHaut.strType == 'b' && objLodeRunner.intPosYActuel + intHauteurCellule < objLodeRunner.objetAutour.objEnHaut.strType + intHauteurCellule)) {
-					console.log('game over');
-				}
+				function mettreAJourAnimationLodeRunner() {
+					touverObjetAutourLodeRunner()
+					//chute
+					if (
+						objLodeRunner.objetAutour.objAPosLodeRunner.strType == "b" ||
+						(objLodeRunner.objetAutour.objEnHaut.strType == "b" &&
+							objLodeRunner.intPosYActuel + intHauteurCellule <
+								objLodeRunner.objetAutour.objEnHaut.strType + intHauteurCellule)
+					) {
+						console.log("game over")
+					}
 
-				if (objLodeRunner.binSurBarre && objLodeRunner.binMovBas && objLodeRunner.objetAutour.objEnBas.strType != 'e') {
-					objLodeRunner.binEnChute = true;
-				}
+					if (
+						objLodeRunner.binSurBarre &&
+						objLodeRunner.binMovBas &&
+						objLodeRunner.objetAutour.objEnBas.strType != "e"
+					) {
+						objLodeRunner.binEnChute = true
+					}
 
-				if (objLodeRunner.objetAutour.objAPosLodeRunner.strType == 'o'){
-					for (i = 0; i < objOr.tPos.length; i++){
-						if (objOr.tPos[i].x == objLodeRunner.objetAutour.objAPosLodeRunner.intX && objOr.tPos[i].y == objLodeRunner.objetAutour.objAPosLodeRunner.intY){
-							objBarreInfo.intScore += 250;
-							objOr.tPos.splice(i, 1);
-						}
-					}
-				}
-
-				if (((((objLodeRunner.objetAutour.objAPosLodeRunner.strType == ' ' || objLodeRunner.objetAutour.objAPosLodeRunner.strType == 'f' || objLodeRunner.objetAutour.objAPosLodeRunner.strType == 'o') &&
-					objLodeRunner.intPosYActuel < (objLodeRunner.objetAutour.objEnBas.intY - objLodeRunner.intHauteurParRapportSol)
-					|| (objLodeRunner.objetAutour.objEnBas.strType == ' ' || objLodeRunner.objetAutour.objEnBas.strType == 'f' || objLodeRunner.objetAutour.objEnBas.strType == 'o'))
-					&& ((objLodeRunner.intPosXActuel - 15 > objLodeRunner.objetAutour.objAPosLodeRunner.intX && objLodeRunner.intScaleX == 1)
-						|| (objLodeRunner.intPosXActuel + 15 < objLodeRunner.objetAutour.objAPosLodeRunner.intX + intLongueurCellule && objLodeRunner.intScaleX == -1))) && (!objLodeRunner.binSurBarre)) || objLodeRunner.binEnChute) {
-
-					if ((objLodeRunner.objetAutour.objEnBas.strType == 'b' || objLodeRunner.objetAutour.objEnBas.strType == 'e') && (objLodeRunner.intPosYActuel == objLodeRunner.objetAutour.objEnBas.intY - 2
-						|| (objLodeRunner.intPosYActuel == objLodeRunner.objetAutour.objEnBas.intY - objLodeRunner.intHauteurParRapportSol))) {
-						objLodeRunner.binEnChute = false;
-					}
-					else {
-						objLodeRunner.intPosYActuel += objLodeRunner.intVitesse;
-						objLodeRunner.binMovGauche = false
-						objLodeRunner.binMovDroite = false
-						objLodeRunner.binMovHaut = false
-					}
-				}
-
-				if (objLodeRunner.objetAutour.objAPosLodeRunner.strType == 'f' && (objLodeRunner.objetAutour.objAPosLodeRunner.intY + intHauteurCellule - objLodeRunner.intHauteurParRapportSol) == objLodeRunner.intPosYActuel) {
-					objLodeRunner.binSurBarre = true;
-				}
-				else {
-					objLodeRunner.binSurBarre = false;
-				}
-
-				if (objLodeRunner.binMovDroite && objLodeRunner.intPosXActuel <= objCanvas.width - 15 &&
-					!(objLodeRunner.objetAutour.objADroite.strType == 'b' &&
-						(objLodeRunner.intPosXActuel + (intLongueurCellule / 2)) >= objLodeRunner.objetAutour.objADroite.intX)) {
-					objLodeRunner.intScaleX = 1
-					if (!(objLodeRunner.binSurEchelle == true && objLodeRunner.objetAutour.objEnHautADroite.strType == 'b')) {
-						objLodeRunner.intPosXActuel += objLodeRunner.intVitesse
-						objLodeRunner.binSurEchelle = false;
-					}
-					if (objLodeRunner.objetAutour.objEnHautADroite.strType == 'f' && objLodeRunner.intPosYActuel <= objLodeRunner.objetAutour.objAPosLodeRunner.intY + (3 * intHauteurCellule / 4)) {
-						objLodeRunner.intPosYActuel = objLodeRunner.objetAutour.objEnHautADroite.intY + intHauteurCellule - objLodeRunner.intHauteurParRapportSol;
-					}
-				}
-				else if (objLodeRunner.binMovGauche && objLodeRunner.intPosXActuel >= 15
-					&& !(objLodeRunner.objetAutour.objAGauche.strType == 'b' &&
-						(objLodeRunner.intPosXActuel - (intLongueurCellule / 2) < objLodeRunner.objetAutour.objAGauche.intX + intLongueurCellule))) {
-					objLodeRunner.intScaleX = -1
-					if (!(objLodeRunner.binSurEchelle == true && objLodeRunner.objetAutour.objEnHautAGauche.strType == 'b')) {
-						objLodeRunner.intPosXActuel -= objLodeRunner.intVitesse;
-						objLodeRunner.binSurEchelle = false;
-					}
-				}
-				else if (objLodeRunner.binMovHaut) {
-					if (objLodeRunner.objetAutour.objAPosLodeRunner.strType == 'e') {
-						objLodeRunner.intPosXActuel = objLodeRunner.objetAutour.objAPosLodeRunner.intX + (intLongueurCellule / 2)
-						objLodeRunner.intPosYActuel -= objLodeRunner.intVitesse;
-						objLodeRunner.binSurEchelle = true;
-					}
-					else {
-						objLodeRunner.binSurEchelle = false;
-					}
-				}
-				else if (objLodeRunner.binMovBas) {
-					if (!objLodeRunner.binEnChute &&((objLodeRunner.objetAutour.objAPosLodeRunner.strType == 'e' &&
-						(objLodeRunner.objetAutour.objEnBas.strType == 'b' &&
-							objLodeRunner.intPosYActuel < (objLodeRunner.objetAutour.objEnBas.intY - objLodeRunner.intHauteurParRapportSol))) ||
-						objLodeRunner.objetAutour.objEnBas.strType == 'e')) {
-						objLodeRunner.intPosXActuel = objLodeRunner.objetAutour.objAPosLodeRunner.intX + (intLongueurCellule / 2)
-						objLodeRunner.intPosYActuel += objLodeRunner.intVitesse;
-						objLodeRunner.binSurEchelle = true;
-					}
-					else {
-						objLodeRunner.binSurEchelle = false;
-					}
-				}
-			}
-
-
-
-			const mouvementLodeRunner = () => {
-				switch (event.keyCode) {
-					case 39:
-						objLodeRunner.binMovDroite = true
-						break
-					case 37:
-						objLodeRunner.binMovGauche = true
-						break
-					case 38:
-						objLodeRunner.binMovHaut = true
-						break
-					case 40:
-						objLodeRunner.binMovBas = true
-						break
-				}
-			}
-			const arreterMouvementLodeRunner = () => {
-				switch (event.keyCode) {
-					case 39:
-						objLodeRunner.binMovDroite = false
-						break
-					case 37:
-						objLodeRunner.binMovGauche = false
-						break
-					case 38:
-						objLodeRunner.binMovHaut = false
-						break
-					case 40:
-						objLodeRunner.binMovBas = false
-						break
-					case 90:
-						if (objLodeRunner.objetAutour.objEnBasAGauche.strType == 'b') {
-							for (i = 0; i < objBrique.tPos.length; i++) {
-								if ((objLodeRunner.objetAutour.objEnBasAGauche.intX == objBrique.tPos[i].x
-									&& objLodeRunner.objetAutour.objEnBasAGauche.intY == objBrique.tPos[i].y)
-									&& objLodeRunner.objetAutour.objAGauche.strType != 'e'
-									&& objLodeRunner.objetAutour.objAGauche.strType != 'o'
-									&& !objLodeRunner.binSurEchelle
-									&& !objLodeRunner.binSurBarre) {
-									objBrique.tPos[i].binTrou = true;
-									objBrique.tPos[i].objDateTrou = new Date();
-									tTableauDeJeu[objBrique.tPos[i].y / intHauteurCellule][objBrique.tPos[i].x / intLongueurCellule] = ' ';
-								}
+					if (objLodeRunner.objetAutour.objAPosLodeRunner.strType == "o") {
+						for (i = 0; i < objOr.tPos.length; i++) {
+							if (
+								objOr.tPos[i].x == objLodeRunner.objetAutour.objAPosLodeRunner.intX &&
+								objOr.tPos[i].y == objLodeRunner.objetAutour.objAPosLodeRunner.intY
+							) {
+								objBarreInfo.intScore += 250
+								objOr.tPos.splice(i, 1)
 							}
 						}
-						break
-					case 88:
-						if (objLodeRunner.objetAutour.objEnBasADroite.strType == 'b') {
-							for (i = 0; i < objBrique.tPos.length; i++) {
-								if ((objLodeRunner.objetAutour.objEnBasADroite.intX == objBrique.tPos[i].x
-									&& objLodeRunner.objetAutour.objEnBasADroite.intY == objBrique.tPos[i].y)
-									&& objLodeRunner.objetAutour.objADroite.strType != 'e'
-									&& objLodeRunner.objetAutour.objADroite.strType != 'o'
-									&& !objLodeRunner.binSurEchelle
-									&& !objLodeRunner.binSurBarre) {
-									objBrique.tPos[i].binTrou = true;
-									objBrique.tPos[i].objDateTrou = new Date();
-									tTableauDeJeu[objBrique.tPos[i].y / intHauteurCellule][objBrique.tPos[i].x / intLongueurCellule] = ' ';
-								}
-							}
+					}
+
+					if (
+						((((objLodeRunner.objetAutour.objAPosLodeRunner.strType == " " ||
+							objLodeRunner.objetAutour.objAPosLodeRunner.strType == "f" ||
+							objLodeRunner.objetAutour.objAPosLodeRunner.strType == "o") &&
+							objLodeRunner.intPosYActuel <
+								objLodeRunner.objetAutour.objEnBas.intY - objLodeRunner.intHauteurParRapportSol) ||
+							objLodeRunner.objetAutour.objEnBas.strType == " " ||
+							objLodeRunner.objetAutour.objEnBas.strType == "f" ||
+							objLodeRunner.objetAutour.objEnBas.strType == "o") &&
+							((objLodeRunner.intPosXActuel - 15 >
+								objLodeRunner.objetAutour.objAPosLodeRunner.intX &&
+								objLodeRunner.intScaleX == 1) ||
+								(objLodeRunner.intPosXActuel + 15 <
+									objLodeRunner.objetAutour.objAPosLodeRunner.intX + intLongueurCellule &&
+									objLodeRunner.intScaleX == -1)) &&
+							!objLodeRunner.binSurBarre) ||
+						objLodeRunner.binEnChute
+					) {
+						if (
+							(objLodeRunner.objetAutour.objEnBas.strType == "b" ||
+								objLodeRunner.objetAutour.objEnBas.strType == "e") &&
+							(objLodeRunner.intPosYActuel == objLodeRunner.objetAutour.objEnBas.intY - 2 ||
+								objLodeRunner.intPosYActuel ==
+									objLodeRunner.objetAutour.objEnBas.intY - objLodeRunner.intHauteurParRapportSol)
+						) {
+							objLodeRunner.binEnChute = false
+						} else {
+							objLodeRunner.intPosYActuel += objLodeRunner.intVitesse
+							objLodeRunner.binMovGauche = false
+							objLodeRunner.binMovDroite = false
+							objLodeRunner.binMovHaut = false
 						}
-						break
+					}
+
+					if (
+						objLodeRunner.objetAutour.objAPosLodeRunner.strType == "f" &&
+						objLodeRunner.objetAutour.objAPosLodeRunner.intY +
+							intHauteurCellule -
+							objLodeRunner.intHauteurParRapportSol ==
+							objLodeRunner.intPosYActuel
+					) {
+						objLodeRunner.binSurBarre = true
+					} else {
+						objLodeRunner.binSurBarre = false
+					}
+
+					if (
+						objLodeRunner.binMovDroite &&
+						objLodeRunner.intPosXActuel <= objCanvas.width - 15 &&
+						!(
+							objLodeRunner.objetAutour.objADroite.strType == "b" &&
+							objLodeRunner.intPosXActuel + intLongueurCellule / 2 >=
+								objLodeRunner.objetAutour.objADroite.intX
+						)
+					) {
+						objLodeRunner.intScaleX = 1
+						if (
+							!(
+								objLodeRunner.binSurEchelle == true &&
+								objLodeRunner.objetAutour.objEnHautADroite.strType == "b"
+							)
+						) {
+							objLodeRunner.intPosXActuel += objLodeRunner.intVitesse
+							objLodeRunner.binSurEchelle = false
+						}
+						if (
+							objLodeRunner.objetAutour.objEnHautADroite.strType == "f" &&
+							objLodeRunner.intPosYActuel <=
+								objLodeRunner.objetAutour.objAPosLodeRunner.intY + (3 * intHauteurCellule) / 4
+						) {
+							objLodeRunner.intPosYActuel =
+								objLodeRunner.objetAutour.objEnHautADroite.intY +
+								intHauteurCellule -
+								objLodeRunner.intHauteurParRapportSol
+						}
+					} else if (
+						objLodeRunner.binMovGauche &&
+						objLodeRunner.intPosXActuel >= 15 &&
+						!(
+							objLodeRunner.objetAutour.objAGauche.strType == "b" &&
+							objLodeRunner.intPosXActuel - intLongueurCellule / 2 <
+								objLodeRunner.objetAutour.objAGauche.intX + intLongueurCellule
+						)
+					) {
+						objLodeRunner.intScaleX = -1
+						if (
+							!(
+								objLodeRunner.binSurEchelle == true &&
+								objLodeRunner.objetAutour.objEnHautAGauche.strType == "b"
+							)
+						) {
+							objLodeRunner.intPosXActuel -= objLodeRunner.intVitesse
+							objLodeRunner.binSurEchelle = false
+						}
+					} else if (objLodeRunner.binMovHaut) {
+						if (objLodeRunner.objetAutour.objAPosLodeRunner.strType == "e") {
+							objLodeRunner.intPosXActuel =
+								objLodeRunner.objetAutour.objAPosLodeRunner.intX + intLongueurCellule / 2
+							objLodeRunner.intPosYActuel -= objLodeRunner.intVitesse
+							objLodeRunner.binSurEchelle = true
+						} else {
+							objLodeRunner.binSurEchelle = false
+						}
+					} else if (objLodeRunner.binMovBas) {
+						if (
+							!objLodeRunner.binEnChute &&
+							((objLodeRunner.objetAutour.objAPosLodeRunner.strType == "e" &&
+								objLodeRunner.objetAutour.objEnBas.strType == "b" &&
+								objLodeRunner.intPosYActuel <
+									objLodeRunner.objetAutour.objEnBas.intY -
+										objLodeRunner.intHauteurParRapportSol) ||
+								objLodeRunner.objetAutour.objEnBas.strType == "e")
+						) {
+							objLodeRunner.intPosXActuel =
+								objLodeRunner.objetAutour.objAPosLodeRunner.intX + intLongueurCellule / 2
+							objLodeRunner.intPosYActuel += objLodeRunner.intVitesse
+							objLodeRunner.binSurEchelle = true
+						} else {
+							objLodeRunner.binSurEchelle = false
+						}
+					}
 				}
 
-			}
+				const mouvementLodeRunner = () => {
+					switch (event.keyCode) {
+						case 39:
+							objLodeRunner.binMovDroite = true
+							break
+						case 37:
+							objLodeRunner.binMovGauche = true
+							break
+						case 38:
+							objLodeRunner.binMovHaut = true
+							break
+						case 40:
+							objLodeRunner.binMovBas = true
+							break
+					}
+				}
+				const arreterMouvementLodeRunner = () => {
+					switch (event.keyCode) {
+						case 39:
+							objLodeRunner.binMovDroite = false
+							break
+						case 37:
+							objLodeRunner.binMovGauche = false
+							break
+						case 38:
+							objLodeRunner.binMovHaut = false
+							break
+						case 40:
+							objLodeRunner.binMovBas = false
+							break
+						case 90:
+							if (objLodeRunner.objetAutour.objEnBasAGauche.strType == "b") {
+								for (i = 0; i < objBrique.tPos.length; i++) {
+									if (
+										objLodeRunner.objetAutour.objEnBasAGauche.intX == objBrique.tPos[i].x &&
+										objLodeRunner.objetAutour.objEnBasAGauche.intY == objBrique.tPos[i].y &&
+										objLodeRunner.objetAutour.objAGauche.strType != "e" &&
+										objLodeRunner.objetAutour.objAGauche.strType != "o" &&
+										!objLodeRunner.binSurEchelle &&
+										!objLodeRunner.binSurBarre
+									) {
+										objBrique.tPos[i].binTrou = true
+										objBrique.tPos[i].objDateTrou = new Date()
+										tTableauDeJeu[objBrique.tPos[i].y / intHauteurCellule][
+											objBrique.tPos[i].x / intLongueurCellule
+										] = " "
+									}
+								}
+							}
+							break
+						case 88:
+							if (objLodeRunner.objetAutour.objEnBasADroite.strType == "b") {
+								for (i = 0; i < objBrique.tPos.length; i++) {
+									if (
+										objLodeRunner.objetAutour.objEnBasADroite.intX == objBrique.tPos[i].x &&
+										objLodeRunner.objetAutour.objEnBasADroite.intY == objBrique.tPos[i].y &&
+										objLodeRunner.objetAutour.objADroite.strType != "e" &&
+										objLodeRunner.objetAutour.objADroite.strType != "o" &&
+										!objLodeRunner.binSurEchelle &&
+										!objLodeRunner.binSurBarre
+									) {
+										objBrique.tPos[i].binTrou = true
+										objBrique.tPos[i].objDateTrou = new Date()
+										tTableauDeJeu[objBrique.tPos[i].y / intHauteurCellule][
+											objBrique.tPos[i].x / intLongueurCellule
+										] = " "
+									}
+								}
+							}
+							break
+					}
+				}
 
-			const trouverObjetAutourPerso = (objPerso) => {
+				const trouverObjetAutourPerso = (objPerso) => {
 					let intX = Math.floor(
 						(objPerso.intPosXActuel + intLongueurCellule / 2) / intLongueurCellule
 					)
@@ -934,7 +1011,8 @@
 						// S'il n'y a pas dechelle ou de brique, on ce deplace a droite
 						if (
 							!(
-								objPerso.binSurEchelle == true && objPerso.objetAutour.objEnHautAGauche.strType == "b"
+								objPerso.binSurEchelle == true &&
+								objPerso.objetAutour.objEnHautAGauche.strType == "b"
 							)
 						) {
 							objPerso.intPosXActuel -= objPerso.intVitesse
@@ -946,7 +1024,8 @@
 							objPerso.intPosYActuel <=
 								objPerso.objetAutour.objAPosPerso.intY + (3 * intHauteurCellule) / 4
 						) {
-							objPerso.intPosYActuel = objPerso.objetAutour.objEnHautAGauche.intY + intHauteurCellule
+							objPerso.intPosYActuel =
+								objPerso.objetAutour.objEnHautAGauche.intY + intHauteurCellule
 						}
 					}
 					// Si le perso veux se deplace vers la droite et qu'il peux se deplacer, on le tourne de cote
@@ -964,7 +1043,8 @@
 						// il peu bouger vers la gauche
 						if (
 							!(
-								objPerso.binSurEchelle == true && objPerso.objetAutour.objEnHautADroite.strType == "b"
+								objPerso.binSurEchelle == true &&
+								objPerso.objetAutour.objEnHautADroite.strType == "b"
 							)
 						) {
 							objPerso.intPosXActuel += objPerso.intVitesse
@@ -1145,6 +1225,7 @@
 						}
 					}
 				}
+			}
 		</script>
 	</head>
 
