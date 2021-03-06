@@ -33,7 +33,7 @@
 			let strTempsNiveau = "00:00"
 
 			const intVitesse = 2.5
-			let intNiveau = 10
+			let intNiveau = 6
 			let intScoreNiveau = 0
 			let intNbVieNiveau = 5
 			let binDemarrer = false
@@ -53,12 +53,12 @@
 				"MediumPurple",
 				"orange",
 				"violet",
-				"pink",
+				"DarkCyan",
 				"lime",
 				"#C71585",
 				"teal",
 				"#CD5C5C",
-				"OliveDrab",
+				"oliveDrab",
 			]
 
 			const initAnimation = () => {
@@ -1264,8 +1264,7 @@
 								objPerso.tPosTrou[0] / intLongueurCellule
 							] = " "
 							if (
-								objLodeRunner.intPosXActuel -
-									(objLodeRunner.intPosXActuel + intLongueurCellule / 2) >
+								objLodeRunner.intPosXActuel - (objPerso.intPosXActuel + intLongueurCellule / 2) >
 								0
 							) {
 								objPerso.intPosXActuel = objPerso.objetAutour.objEnHautADroite.intX - 15
