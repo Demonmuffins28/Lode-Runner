@@ -5,7 +5,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta name="description" content="Lode Runner" />
-	<title>Lode Runner par Marc-Olivier Lalonde</title>
+	<title>Lode Runner par Marc-Olivier Lalonde et Amine Benslimane</title>
 	<link rel="stylesheet" type="text/css" href="StyleLabo5.css" />
 	<link rel="javascript" href="echelle.js" />
 
@@ -26,44 +26,23 @@
 		let objImageOr = null
 		let objOr = null
 		let objBarreInfo = null
-		let tTableauNonModifier = null
+		let objPierre = null;
 
-		let objDate = null
+		let objDate = new Date();
+		let intTempsEcoulerMs = 0;
+		let strTempsNiveau = "00:00";
+
 		const intVitesse = 2.5
 		let intNiveau = 1
+		let intScoreNiveau = 0
+		let intNbVieNiveau = 5;
+		let binDemarrer = false;
 
 		let objLodeRunner = null
 		let objGarde = null
 		let tObjetsGarde = []
 
-		/*
-						  ' ' = case vide (espace dans les guillemets)
-						  'o' = or
-						  'b' = brique
-						  'e' = echelle
-						  'f' = barre de franchissement
-						  'p' = plancher gris
-					  */
-		// prettier-ignore
-		let tTableauDeJeu = [
-			[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-			[' ', ' ', ' ', ' ', 'o', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-			['b', 'b', 'b', 'b', 'b', 'b', 'b', 'e', 'b', 'b', 'b', 'b', 'b', 'b', 'b', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-			[' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', ' ', ' ', ' ', ' ', ' ', 'o', ' ', ' ', ' ', ' '],
-			[' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' ', 'b', 'b', 'e', ' ', ' ', ' ', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'e', 'b', 'b'],
-			[' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' ', 'b', 'b', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', ' ', ' '],
-			[' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' ', 'b', 'b', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'o', ' ', ' ', 'e', ' ', ' '],
-			['b', 'b', 'e', 'b', 'b', 'b', 'b', 'b', ' ', ' ', ' ', ' ', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'e', 'b', 'b', 'b', 'b', 'b', 'b', 'b'],
-			[' ', ' ', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-			[' ', ' ', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-			['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'e', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-			[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-			[' ', ' ', ' ', ' ', ' ', ' ', ' ', 'o', ' ', 'e', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'e', ' ', ' ', ' ', 'o', ' ', ' ', ' '],
-			[' ', ' ', ' ', ' ', 'e', 'b', 'b', 'b', 'b', 'b', 'b', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'e'],
-			[' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'o', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e'],
-			['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b'],
-			['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p']
-		]
+		let tTableauDeJeu = null;
 
 		const initAnimation = () => {
 			objCanvas = document.getElementById("monCanvas");
@@ -77,6 +56,7 @@
 			initEchelle();
 			initBarreFranchissement();
 			initOr();
+			initObjPierre();
 			initTableauJeu();
 			initObjLodeRunner();
 			initGardes();
@@ -85,6 +65,76 @@
 			dessiner(); // Dessiner une première fois
 			animer();
 		};
+
+		const recommencerNiveau = () =>{
+			intNbVieNiveau --;
+			tObjetsGarde = [];
+			intTempsEcoulerMs = 0;
+			strTempsNiveau = "00:00"
+			objBarreInfo.intScore -= intScoreNiveau;
+			intScoreNiveau = 0;
+			binDemarrer = false
+			genererTableauJeu();
+			initFond();
+			initBrique();
+			initEchelle();
+			initBarreFranchissement();
+			initOr();
+			initTableauJeu();
+			initObjLodeRunner();
+			initGardes();
+		}
+
+		const changerNiveau = () =>{
+			intNbVieNiveau = 5;
+			tObjetsGarde = [];
+			intTempsEcoulerMs = 0;
+			intNiveau++;
+			strTempsNiveau = "00:00"
+			objBarreInfo.intScore += 1500;
+			intScoreNiveau = 0;
+			binDemarrer = false
+			genererTableauJeu();
+			initFond();
+			initBrique();
+			initEchelle();
+			initBarreFranchissement();
+			initOr();
+			initTableauJeu();
+			initObjLodeRunner();
+			initGardes();
+		}
+
+		const genererTableauJeu = () => {
+			/*
+					' ' = case vide (espace dans les guillemets)
+					'o' = or
+					'b' = brique
+					'e' = echelle
+					'f' = barre de franchissement
+					'p' = plancher gris
+			*/
+			// prettier-ignore
+			tTableauDeJeu = [
+				[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+				[' ', ' ', ' ', ' ', 'o', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+				['b', 'b', 'b', 'b', 'b', 'b', 'b', 'e', 'b', 'b', 'b', 'b', 'b', 'b', 'b', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+				[' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', ' ', ' ', ' ', ' ', ' ', 'o', ' ', ' ', ' ', ' '],
+				[' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' ', 'b', 'b', 'e', ' ', ' ', ' ', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'e', 'b', 'b'],
+				[' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' ', 'b', 'b', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', ' ', ' '],
+				[' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' ', 'b', 'b', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'o', ' ', ' ', 'e', ' ', ' '],
+				['b', 'b', 'e', 'b', 'b', 'b', 'b', 'b', ' ', ' ', ' ', ' ', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'e', 'b', 'b', 'b', 'b', 'b', 'b', 'b'],
+				[' ', ' ', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+				[' ', ' ', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+				['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'e', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+				[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
+				[' ', ' ', ' ', ' ', ' ', ' ', ' ', 'o', ' ', 'e', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'f', 'e', ' ', ' ', ' ', 'o', ' ', ' ', ' '],
+				[' ', ' ', ' ', ' ', 'e', 'b', 'b', 'b', 'b', 'b', 'b', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'e'],
+				[' ', ' ', ' ', ' ', 'e', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'o', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'e'],
+				['b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b', 'b'],
+				['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p', 'p']
+			]
+		}
 
 		const initBarreInfo = () => {
 			objBarreInfo = new Object();
@@ -178,6 +228,7 @@
 
 		const initTableauJeu = () => {
 			// intit chaque objet for ij loop pour push position dans chaque objetfixe.
+			genererTableauJeu()
 			for (let i = 0; i < tTableauDeJeu.length; i++) {
 				for (let j = 0; j < tTableauDeJeu[i].length; j++) {
 					switch (tTableauDeJeu[i][j]) {
@@ -203,6 +254,12 @@
 							break;
 						case "o":
 							objOr.tPos.push({
+								x: j * intLongueurCellule,
+								y: i * intHauteurCellule,
+							});
+							break;
+						case "p":
+							objPierre.tPos.push({
 								x: j * intLongueurCellule,
 								y: i * intHauteurCellule,
 							});
@@ -237,44 +294,6 @@
 				objGarde.objetAutour = {};
 				tObjetsGarde.push(objGarde);
 			}
-
-			// objGarde2 = new Object()
-			// objGarde2.intPosXActuel = 8 * intLongueurCellule
-			// objGarde2.intPosYActuel = 9 * intHauteurCellule
-			// objGarde2.strCouleur = "green"
-			// objGarde2.intVitesse = intVitesse * 0.8
-			// objGarde2.intScaleX = 1
-			// objGarde2.binMovDroite = false
-			// objGarde2.binMovGauche = false
-			// objGarde2.binMovHaut = false
-			// objGarde2.binMovBas = false
-			// objGarde2.binSurEchelle = false
-			// objGarde2.binSurBarre = false
-			// objGarde2.binEnChute = false
-			// objGarde2.binDansTrou = false
-			// objGarde2.objDateTempsTrou = null
-			// objGarde2.binPossedeOr = false
-			// objGarde2.tPosTrou = []
-			// objGarde2.objetAutour = {}
-
-			// objGarde3 = new Object()
-			// objGarde3.intPosXActuel = 12 * intLongueurCellule
-			// objGarde3.intPosYActuel = 3 * intHauteurCellule
-			// objGarde3.strCouleur = "purple"
-			// objGarde3.intVitesse = intVitesse * 0.8
-			// objGarde3.intScaleX = 1
-			// objGarde3.binMovDroite = false
-			// objGarde3.binMovGauche = false
-			// objGarde3.binMovHaut = false
-			// objGarde3.binMovBas = false
-			// objGarde3.binSurEchelle = false
-			// objGarde3.binSurBarre = false
-			// objGarde3.binEnChute = false
-			// objGarde3.binDansTrou = false
-			// objGarde3.objDateTempsTrou = null
-			// objGarde3.binPossedeOr = false
-			// objGarde3.tPosTrou = []
-			// objGarde3.objetAutour = {}
 		};
 
 		const animer = () => {
@@ -292,11 +311,25 @@
 		};
 
 		const mettreAJourAnimation = () => {
-			objDate = new Date();
-			mettreAJourAnimationLodeRunner();
-			algorithmeGarde();
-			mettreAJourObjBrique();
+			if (binDemarrer){
+				if (intNiveau == 11){
+					arreterAnimation();
+				}
+				mettreAJourTemps();
+				mettreAJourAnimationLodeRunner();
+				algorithmeGarde();
+				mettreAJourObjBrique();
+			}
 		};
+
+		const mettreAJourTemps = () => {
+			let objDate2 = new Date();
+			intTempsEcoulerMs += objDate2 - objDate;
+			objDate = objDate2;
+			let intMinute = Math.floor((intTempsEcoulerMs/1000/60/60)*60);
+            let intSeconde = Math.floor(((intTempsEcoulerMs/1000/60/60)*60 - intMinute)*60);
+			strTempsNiveau = ("0"+intMinute).slice(-2) + ":"+ ("0"+intSeconde).slice(-2);
+		}
 
 		const arreterAnimation = () => {
 			if (objCycleAnimation != null) cancelAnimationFrame(objCycleAnimation);
@@ -311,8 +344,28 @@
 			dessinerLodeRunner();
 			dessinerGardes();
 			dessinerBrique();
+			dessinerPierres();
 			dessinerBarreInfo();
 		};
+
+		const initObjPierre = () =>{
+			objPierre = new Object();
+			objPierre.tPos = [];
+		}
+
+		const dessinerPierres = () => {
+			objC2D.save();
+			for (let index = 0; index < objPierre.tPos.length; index++) {
+				let intPosXActuel = objPierre.tPos[index].x;
+				let intPosYActuel = objPierre.tPos[index].y;
+				objC2D.fillStyle = 'rgb(105,105,105)';
+				objC2D.strokeStyle = 'gray';
+				objC2D.lineWidth = 6;
+				objC2D.fillRect(intPosXActuel, intPosYActuel, intLongueurCellule, intHauteurCellule);
+				objC2D.strokeRect(intPosXActuel, intPosYActuel, intLongueurCellule, intHauteurCellule);
+			}
+			objC2D.restore();
+		}
 
 		const dessinerBarreInfo = () => {
 			objC2D.save();
@@ -339,6 +392,21 @@
 			objC2D.fillText(
 				"Score: " + objBarreInfo.intScore,
 				10,
+				objBarreInfo.intHauteur / 2
+			);
+			objC2D.fillText(
+				"Temps: " + strTempsNiveau,
+				objCanvas.width/4,
+				objBarreInfo.intHauteur / 2
+			);
+			objC2D.fillText(
+				"Niveau: " + intNiveau,
+				2.5*objCanvas.width/4,
+				objBarreInfo.intHauteur / 2
+			);
+			objC2D.fillText(
+				"Vies: " + intNbVieNiveau,
+				2.78*objCanvas.width/3,
 				objBarreInfo.intHauteur / 2
 			);
 			objC2D.restore();
@@ -762,181 +830,197 @@
 		};
 
 		function mettreAJourAnimationLodeRunner() {
-			touverObjetAutourLodeRunner();
-			//chute
-			if (objLodeRunner.intOrRecolter == 6) {
-				for (i = 0; i < 4; i++) {
-					tTableauDeJeu[i][18] = "e";
-					objEchelle.tPos.push({
-						x: 18 * intLongueurCellule,
-						y: i * intHauteurCellule,
-					});
+			if (objLodeRunner.intPosYActuel == 40){
+				changerNiveau();
+			}
+			if (binDemarrer){
+				touverObjetAutourLodeRunner();
+				//chute
+				if (objLodeRunner.intOrRecolter == 6) {
+					for (i = 0; i < 4; i++) {
+						tTableauDeJeu[i][18] = "e";
+						objEchelle.tPos.push({
+							x: 18 * intLongueurCellule,
+							y: i * intHauteurCellule,
+						});
+					}
+					objLodeRunner.intOrRecolter = 0;
 				}
-				objLodeRunner.intOrRecolter++;
-			}
-			if (
-				objLodeRunner.objetAutour.objAPosLodeRunner.strType == "b" ||
-				(objLodeRunner.objetAutour.objEnHaut.strType == "b" &&
-					objLodeRunner.intPosYActuel + intHauteurCellule <
-					objLodeRunner.objetAutour.objEnHaut.strType + intHauteurCellule)
-			) {
-				console.log("game over");
-			}
 
-			if (
-				objLodeRunner.binSurBarre &&
-				objLodeRunner.binMovBas &&
-				objLodeRunner.objetAutour.objEnBas.strType != "e"
-			) {
-				objLodeRunner.binEnChute = true;
-			}
+				if (
+					objLodeRunner.binSurBarre &&
+					objLodeRunner.binMovBas &&
+					objLodeRunner.objetAutour.objEnBas.strType != "e"
+				) {
+					objLodeRunner.binEnChute = true;
+				}
 
-			if (objLodeRunner.objetAutour.objAPosLodeRunner.strType == "o") {
-				for (i = 0; i < objOr.tPos.length; i++) {
-					if (
-						objOr.tPos[i].x ==
-						objLodeRunner.objetAutour.objAPosLodeRunner.intX &&
-						objOr.tPos[i].y ==
-						objLodeRunner.objetAutour.objAPosLodeRunner.intY
-					) {
-						objBarreInfo.intScore += 250;
-						tTableauDeJeu[objOr.tPos[i].y / intHauteurCellule][
-							objOr.tPos[i].x / intLongueurCellule
-						] = " ";
-						objOr.tPos.splice(i, 1);
-						objLodeRunner.intOrRecolter++;
+				if (objLodeRunner.objetAutour.objAPosLodeRunner.strType == "o") {
+					for (i = 0; i < objOr.tPos.length; i++) {
+						if (
+							objOr.tPos[i].x ==
+							objLodeRunner.objetAutour.objAPosLodeRunner.intX &&
+							objOr.tPos[i].y ==
+							objLodeRunner.objetAutour.objAPosLodeRunner.intY
+						) {
+							objBarreInfo.intScore += 250;
+							intScoreNiveau += 250;
+							tTableauDeJeu[objOr.tPos[i].y / intHauteurCellule][
+								objOr.tPos[i].x / intLongueurCellule
+							] = " ";
+							objOr.tPos.splice(i, 1);
+							objLodeRunner.intOrRecolter++;
+						}
 					}
 				}
-			}
 
-			if (
-				((((objLodeRunner.objetAutour.objAPosLodeRunner.strType == " " ||
-					objLodeRunner.objetAutour.objAPosLodeRunner.strType == "f" ||
-					objLodeRunner.objetAutour.objAPosLodeRunner.strType == "o") &&
-					objLodeRunner.intPosYActuel <
-					objLodeRunner.objetAutour.objEnBas.intY -
-					objLodeRunner.intHauteurParRapportSol) ||
-					objLodeRunner.objetAutour.objEnBas.strType == " " ||
-					objLodeRunner.objetAutour.objEnBas.strType == "f" ||
-					objLodeRunner.objetAutour.objEnBas.strType == "o") &&
-					((objLodeRunner.intPosXActuel - 15 >
-						objLodeRunner.objetAutour.objAPosLodeRunner.intX &&
-						objLodeRunner.intScaleX == 1) ||
-						(objLodeRunner.intPosXActuel + 15 <
-							objLodeRunner.objetAutour.objAPosLodeRunner.intX +
-							intLongueurCellule &&
-							objLodeRunner.intScaleX == -1)) &&
-					!objLodeRunner.binSurBarre) ||
-				objLodeRunner.binEnChute
-			) {
 				if (
-					(objLodeRunner.objetAutour.objEnBas.strType == "b" ||
-						objLodeRunner.objetAutour.objEnBas.strType == "e") &&
-					(objLodeRunner.intPosYActuel ==
-						objLodeRunner.objetAutour.objEnBas.intY - 2 ||
-						objLodeRunner.intPosYActuel ==
-						objLodeRunner.objetAutour.objEnBas.intY -
-						objLodeRunner.intHauteurParRapportSol)
-				) {
-					objLodeRunner.binEnChute = false;
-				} else {
-					objLodeRunner.intPosYActuel += objLodeRunner.intVitesse;
-					objLodeRunner.binMovGauche = false;
-					objLodeRunner.binMovDroite = false;
-					objLodeRunner.binMovHaut = false;
-				}
-			}
-
-			if (
-				objLodeRunner.objetAutour.objAPosLodeRunner.strType == "f" &&
-				objLodeRunner.objetAutour.objAPosLodeRunner.intY +
-				intHauteurCellule -
-				objLodeRunner.intHauteurParRapportSol ==
-				objLodeRunner.intPosYActuel
-			) {
-				objLodeRunner.binSurBarre = true;
-			} else {
-				objLodeRunner.binSurBarre = false;
-			}
-
-			if (
-				objLodeRunner.binMovDroite &&
-				objLodeRunner.intPosXActuel <= objCanvas.width - 15 &&
-				!(
-					objLodeRunner.objetAutour.objADroite.strType == "b" &&
-					objLodeRunner.intPosXActuel + intLongueurCellule / 2 >=
-					objLodeRunner.objetAutour.objADroite.intX
-				)
-			) {
-				objLodeRunner.intScaleX = 1;
-				if (
-					!(
-						objLodeRunner.binSurEchelle == true &&
-						objLodeRunner.objetAutour.objEnHautADroite.strType == "b"
-					)
-				) {
-					objLodeRunner.intPosXActuel += objLodeRunner.intVitesse;
-					objLodeRunner.binSurEchelle = false;
-				}
-				if (
-					objLodeRunner.objetAutour.objEnHautADroite.strType == "f" &&
-					objLodeRunner.intPosYActuel <=
-					objLodeRunner.objetAutour.objAPosLodeRunner.intY +
-					(3 * intHauteurCellule) / 4
-				) {
-					objLodeRunner.intPosYActuel =
-						objLodeRunner.objetAutour.objEnHautADroite.intY +
-						intHauteurCellule -
-						objLodeRunner.intHauteurParRapportSol;
-				}
-			} else if (
-				objLodeRunner.binMovGauche &&
-				objLodeRunner.intPosXActuel >= 15 &&
-				!(
-					objLodeRunner.objetAutour.objAGauche.strType == "b" &&
-					objLodeRunner.intPosXActuel - intLongueurCellule / 2 <
-					objLodeRunner.objetAutour.objAGauche.intX + intLongueurCellule
-				)
-			) {
-				objLodeRunner.intScaleX = -1;
-				if (
-					!(
-						objLodeRunner.binSurEchelle == true &&
-						objLodeRunner.objetAutour.objEnHautAGauche.strType == "b"
-					)
-				) {
-					objLodeRunner.intPosXActuel -= objLodeRunner.intVitesse;
-					objLodeRunner.binSurEchelle = false;
-				}
-			} else if (objLodeRunner.binMovHaut) {
-				if (objLodeRunner.objetAutour.objAPosLodeRunner.strType == "e") {
-					objLodeRunner.intPosXActuel =
-						objLodeRunner.objetAutour.objAPosLodeRunner.intX +
-						intLongueurCellule / 2;
-					objLodeRunner.intPosYActuel -= objLodeRunner.intVitesse;
-					objLodeRunner.binSurEchelle = true;
-				} else {
-					objLodeRunner.binSurEchelle = false;
-				}
-			} else if (objLodeRunner.binMovBas) {
-				if (
-					!objLodeRunner.binEnChute &&
-					((objLodeRunner.objetAutour.objAPosLodeRunner.strType == "e" &&
-						objLodeRunner.objetAutour.objEnBas.strType == "b" &&
+					((((objLodeRunner.objetAutour.objAPosLodeRunner.strType == " " ||
+						objLodeRunner.objetAutour.objAPosLodeRunner.strType == "f" ||
+						objLodeRunner.objetAutour.objAPosLodeRunner.strType == "o") &&
 						objLodeRunner.intPosYActuel <
 						objLodeRunner.objetAutour.objEnBas.intY -
 						objLodeRunner.intHauteurParRapportSol) ||
-						objLodeRunner.objetAutour.objEnBas.strType == "e")
+						objLodeRunner.objetAutour.objEnBas.strType == " " ||
+						objLodeRunner.objetAutour.objEnBas.strType == "f" ||
+						objLodeRunner.objetAutour.objEnBas.strType == "o") &&
+						((objLodeRunner.intPosXActuel - 15 >
+							objLodeRunner.objetAutour.objAPosLodeRunner.intX &&
+							objLodeRunner.intScaleX == 1) ||
+							(objLodeRunner.intPosXActuel + 15 <
+								objLodeRunner.objetAutour.objAPosLodeRunner.intX +
+								intLongueurCellule &&
+								objLodeRunner.intScaleX == -1)) &&
+						!objLodeRunner.binSurBarre) ||
+					objLodeRunner.binEnChute
 				) {
-					objLodeRunner.intPosXActuel =
-						objLodeRunner.objetAutour.objAPosLodeRunner.intX +
-						intLongueurCellule / 2;
-					objLodeRunner.intPosYActuel += objLodeRunner.intVitesse;
-					objLodeRunner.binSurEchelle = true;
+					if (
+						(objLodeRunner.objetAutour.objEnBas.strType == "b" ||
+							objLodeRunner.objetAutour.objEnBas.strType == "e") &&
+						(objLodeRunner.intPosYActuel ==
+							objLodeRunner.objetAutour.objEnBas.intY - 2 ||
+							objLodeRunner.intPosYActuel ==
+							objLodeRunner.objetAutour.objEnBas.intY -
+							objLodeRunner.intHauteurParRapportSol)
+					) {
+						objLodeRunner.binEnChute = false;
+					} else {
+						objLodeRunner.intPosYActuel += objLodeRunner.intVitesse;
+						objLodeRunner.binMovGauche = false;
+						objLodeRunner.binMovDroite = false;
+						objLodeRunner.binMovHaut = false;
+					}
+				}
+
+				if (
+					objLodeRunner.objetAutour.objAPosLodeRunner.strType == "f" &&
+					objLodeRunner.objetAutour.objAPosLodeRunner.intY +
+					intHauteurCellule -
+					objLodeRunner.intHauteurParRapportSol ==
+					objLodeRunner.intPosYActuel
+				) {
+					objLodeRunner.binSurBarre = true;
 				} else {
-					objLodeRunner.binSurEchelle = false;
+					objLodeRunner.binSurBarre = false;
+				}
+
+				if (
+					objLodeRunner.binMovDroite &&
+					objLodeRunner.intPosXActuel <= objCanvas.width - 15 &&
+					!(
+						objLodeRunner.objetAutour.objADroite.strType == "b" &&
+						objLodeRunner.intPosXActuel + intLongueurCellule / 2 >=
+						objLodeRunner.objetAutour.objADroite.intX
+					)
+				) {
+					objLodeRunner.intScaleX = 1;
+					if (
+						!(
+							objLodeRunner.binSurEchelle == true &&
+							objLodeRunner.objetAutour.objEnHautADroite.strType == "b"
+						)
+					) {
+						objLodeRunner.intPosXActuel += objLodeRunner.intVitesse;
+						objLodeRunner.binSurEchelle = false;
+					}
+					if (
+						objLodeRunner.objetAutour.objEnHautADroite.strType == "f" &&
+						objLodeRunner.intPosYActuel <=
+						objLodeRunner.objetAutour.objAPosLodeRunner.intY +
+						(3 * intHauteurCellule) / 4
+					) {
+						objLodeRunner.intPosYActuel =
+							objLodeRunner.objetAutour.objEnHautADroite.intY +
+							intHauteurCellule -
+							objLodeRunner.intHauteurParRapportSol;
+					}
+				} 
+				else if (
+					objLodeRunner.binMovGauche &&
+					objLodeRunner.intPosXActuel >= 15 &&
+					!(
+						objLodeRunner.objetAutour.objAGauche.strType == "b" &&
+						objLodeRunner.intPosXActuel - intLongueurCellule / 2 <
+						objLodeRunner.objetAutour.objAGauche.intX + intLongueurCellule
+					)
+				) {
+					objLodeRunner.intScaleX = -1;
+					if (
+						!(
+							objLodeRunner.binSurEchelle == true &&
+							objLodeRunner.objetAutour.objEnHautAGauche.strType == "b"
+						)
+					) {
+						objLodeRunner.intPosXActuel -= objLodeRunner.intVitesse;
+						objLodeRunner.binSurEchelle = false;
+					}
+				} 
+				else if (objLodeRunner.binMovHaut) {
+					if (objLodeRunner.objetAutour.objAPosLodeRunner.strType == "e" && objLodeRunner.intPosYActuel > intHauteurCellule) {
+						objLodeRunner.intPosXActuel =
+							objLodeRunner.objetAutour.objAPosLodeRunner.intX +
+							intLongueurCellule / 2;
+						objLodeRunner.intPosYActuel -= objLodeRunner.intVitesse;
+						objLodeRunner.binSurEchelle = true;
+					} else {
+						objLodeRunner.binSurEchelle = false;
+					}
+				} 
+				else if (objLodeRunner.binMovBas) {
+					if (
+						!objLodeRunner.binEnChute &&
+						((objLodeRunner.objetAutour.objAPosLodeRunner.strType == "e" &&
+							objLodeRunner.objetAutour.objEnBas.strType == "b" &&
+							objLodeRunner.intPosYActuel <
+							objLodeRunner.objetAutour.objEnBas.intY -
+							objLodeRunner.intHauteurParRapportSol) ||
+							objLodeRunner.objetAutour.objEnBas.strType == "e")
+					) {
+						objLodeRunner.intPosXActuel =
+							objLodeRunner.objetAutour.objAPosLodeRunner.intX +
+							intLongueurCellule / 2;
+						objLodeRunner.intPosYActuel += objLodeRunner.intVitesse;
+						objLodeRunner.binSurEchelle = true;
+					} else {
+						objLodeRunner.binSurEchelle = false;
+					}
+				}
+				if (
+					objLodeRunner.objetAutour.objAPosLodeRunner.strType == "b" ||
+					(objLodeRunner.objetAutour.objEnHaut.strType == "b" &&
+						objLodeRunner.intPosYActuel + intHauteurCellule <
+						objLodeRunner.objetAutour.objEnHaut.strType + intHauteurCellule)
+				) {
+					if (intNbVieNiveau != 1){
+						recommencerNiveau();
+					}
+					else {
+						alert("Game Over!")
+						arreterAnimation();
+					}
 				}
 			}
+			
 		}
 
 		const mouvementLodeRunner = () => {
@@ -954,11 +1038,16 @@
 					objLodeRunner.binMovBas = true;
 					break;
 			}
+			if ([37,38,39,40,88,90].includes(event.keyCode) && !binDemarrer){
+				binDemarrer = true;
+				objDate = new Date();
+			}
 		};
 		const arreterMouvementLodeRunner = () => {
 			switch (event.keyCode) {
 				case 39:
 					objLodeRunner.binMovDroite = false;
+					binDemarrer = true;
 					break;
 				case 37:
 					objLodeRunner.binMovGauche = false;
@@ -1073,240 +1162,244 @@
 		};
 
 		const mettreAJourAnimPerso = (objPerso) => {
-			trouverObjetAutourPerso(objPerso);
+			if (binDemarrer){
+				trouverObjetAutourPerso(objPerso);
 
-			if (
-				objPerso.objetAutour.objAPosPerso.strType == "o" &&
-				!objPerso.binPossedeOr
-			) {
-				for (i = 0; i < objOr.tPos.length; i++) {
-					if (
-						objOr.tPos[i].x == objPerso.objetAutour.objAPosPerso.intX &&
-						objOr.tPos[i].y == objPerso.objetAutour.objAPosPerso.intY
-					) {
-						tTableauDeJeu[objOr.tPos[i].y / intHauteurCellule][
-							objOr.tPos[i].x / intLongueurCellule
-						] = " ";
-						objOr.tPos.splice(i, 1);
-						objPerso.binPossedeOr = true;
-					}
-				}
-			}
-
-			if (
-				objPerso.objetAutour.objAPosPerso.strType == " " &&
-				!objPerso.binDansTrou
-			) {
-				for (i = 0; i < objBrique.tPos.length; i++) {
-					if (
-						objBrique.tPos[i].x == objPerso.objetAutour.objAPosPerso.intX &&
-						objBrique.tPos[i].y == objPerso.objetAutour.objAPosPerso.intY
-					) {
-						objPerso.binDansTrou = true;
-						objPerso.objDateTempsTrou = new Date();
-						objPerso.tPosTrou = [objBrique.tPos[i].x, objBrique.tPos[i].y];
-						objPerso.intPosXActuel = objBrique.tPos[i].x;
-						objPerso.intIndexTPosBriqueTrou = i;
-						tTableauDeJeu[objBrique.tPos[i].y / intHauteurCellule][
-							objBrique.tPos[i].x / intLongueurCellule
-						] = "b";
-						if (objPerso.binPossedeOr) {
-							objOr.tPos.push({
-								x: objPerso.objetAutour.objEnHaut.intX,
-								y: objPerso.objetAutour.objEnHaut.intY,
-							});
-							tTableauDeJeu[
-								objPerso.objetAutour.objEnHaut.intY / intHauteurCellule
-							][objPerso.objetAutour.objEnHaut.intX / intLongueurCellule] =
-								"o";
-							objPerso.binPossedeOr = false;
+				if (
+					objPerso.objetAutour.objAPosPerso.strType == "o" &&
+					!objPerso.binPossedeOr
+				) {
+					for (i = 0; i < objOr.tPos.length; i++) {
+						if (
+							objOr.tPos[i].x == objPerso.objetAutour.objAPosPerso.intX &&
+							objOr.tPos[i].y == objPerso.objetAutour.objAPosPerso.intY
+						) {
+							tTableauDeJeu[objOr.tPos[i].y / intHauteurCellule][
+								objOr.tPos[i].x / intLongueurCellule
+							] = " ";
+							objOr.tPos.splice(i, 1);
+							objPerso.binPossedeOr = true;
 						}
+					}
+				}
+
+				if (
+					objPerso.objetAutour.objAPosPerso.strType == " " &&
+					!objPerso.binDansTrou
+				) {
+					for (i = 0; i < objBrique.tPos.length; i++) {
+						if (
+							objBrique.tPos[i].x == objPerso.objetAutour.objAPosPerso.intX &&
+							objBrique.tPos[i].y == objPerso.objetAutour.objAPosPerso.intY
+						) {
+							objPerso.binDansTrou = true;
+							objPerso.objDateTempsTrou = new Date();
+							objPerso.tPosTrou = [objBrique.tPos[i].x, objBrique.tPos[i].y];
+							objPerso.intPosXActuel = objBrique.tPos[i].x;
+							objPerso.intIndexTPosBriqueTrou = i;
+							tTableauDeJeu[objBrique.tPos[i].y / intHauteurCellule][
+								objBrique.tPos[i].x / intLongueurCellule
+							] = "b";
+							if (objPerso.binPossedeOr) {
+								objOr.tPos.push({
+									x: objPerso.objetAutour.objEnHaut.intX,
+									y: objPerso.objetAutour.objEnHaut.intY,
+								});
+								tTableauDeJeu[
+									objPerso.objetAutour.objEnHaut.intY / intHauteurCellule
+								][objPerso.objetAutour.objEnHaut.intX / intLongueurCellule] =
+									"o";
+								objPerso.binPossedeOr = false;
+							}
+							objBarreInfo.intScore += 75;
+							intScoreNiveau += 75;
+						}
+					}
+				}
+
+				if (objPerso.binDansTrou) {
+					if (
+						objDate -
+						objBrique.tPos[objPerso.intIndexTPosBriqueTrou].objDateTrou >=
+						8000
+					) {
+						objPerso.binDansTrou = false;
+						objPerso.objDateTempsTrou = null;
+						objPerso.tPosTrou = [];
+						objPerso.intPosXActuel =
+							Math.floor(Math.random() * 27) * intLongueurCellule;
+						objPerso.intPosYActuel = intHauteurCellule - objPerso.intVitesse;
 						objBarreInfo.intScore += 75;
-					}
-				}
-			}
-
-			if (objPerso.binDansTrou) {
-				if (
-					objDate -
-					objBrique.tPos[objPerso.intIndexTPosBriqueTrou].objDateTrou >=
-					8000
-				) {
-					objPerso.binDansTrou = false;
-					objPerso.objDateTempsTrou = null;
-					objPerso.tPosTrou = [];
-					objPerso.intPosXActuel =
-						Math.floor(Math.random() * 27) * intLongueurCellule;
-					objPerso.intPosYActuel = intHauteurCellule - objPerso.intVitesse;
-					objBarreInfo.intScore += 75;
-				} else if (objDate - objPerso.objDateTempsTrou >= 4000) {
-					objPerso.binDansTrou = false;
-					objPerso.objDateTempsTrou = null;
-					tTableauDeJeu[objPerso.tPosTrou[1] / intHauteurCellule][
-						objPerso.tPosTrou[0] / intLongueurCellule
-					] = " ";
-					if ((objPerso.intScaleX = 1)) {
-						objPerso.intPosXActuel =
-							objPerso.objetAutour.objEnHautADroite.intX;
-						objPerso.intPosYActuel =
-							objPerso.objetAutour.objEnHautADroite.intY -
-							objPerso.intVitesse;
+						intScoreNiveau += 75;
+					} else if (objDate - objPerso.objDateTempsTrou >= 4000) {
+						objPerso.binDansTrou = false;
+						objPerso.objDateTempsTrou = null;
+						tTableauDeJeu[objPerso.tPosTrou[1] / intHauteurCellule][
+							objPerso.tPosTrou[0] / intLongueurCellule
+						] = " ";
+						if ((objPerso.intScaleX == 1)) {
+							objPerso.intPosXActuel =
+								objPerso.objetAutour.objEnHautADroite.intX -15;
+							objPerso.intPosYActuel =
+								objPerso.objetAutour.objEnHautADroite.intY -
+								objPerso.intVitesse;
+						} else {
+							objPerso.intPosXActuel =
+								objPerso.objetAutour.objEnHautAGauche.intX +15;
+							objPerso.intPosYActuel =
+								objPerso.objetAutour.objEnHautAGauche.intY -
+								objPerso.intVitesse;
+						}
+						objPerso.tPosTrou = [];
 					} else {
-						objPerso.intPosXActuel =
-							objPerso.objetAutour.objEnHautAGauche.intX;
-						objPerso.intPosYActuel =
-							objPerso.objetAutour.objEnHautAGauche.intY -
-							objPerso.intVitesse;
+						objPerso.binMovDroite = false;
+						objPerso.binMovGauche = false;
 					}
-					objPerso.tPosTrou = [];
-				} else {
-					objPerso.binMovDroite = false;
-					objPerso.binMovGauche = false;
 				}
-			}
 
-			if (
-				objPerso.binSurBarre &&
-				objPerso.binMovBas &&
-				objPerso.objetAutour.objEnBas.strType != "e"
-			) {
-				// Le mettre en chute
-				objPerso.binEnChute = true;
-			}
-
-			if (
-				(((objPerso.objetAutour.objEnBas.strType == " " ||
-					objPerso.objetAutour.objEnBas.strType == "f" ||
-					objPerso.objetAutour.objEnBas.strType == "o") &&
-					((objPerso.intPosXActuel >=
-						objPerso.objetAutour.objAPosPerso.intX &&
-						objPerso.intScaleX == 1) ||
-						(objPerso.intPosXActuel <=
-							objPerso.objetAutour.objAPosPerso.intX &&
-							objPerso.intScaleX == -1)) &&
-					!objPerso.binSurBarre) ||
-					objPerso.binEnChute) &&
-				!objPerso.binDansTrou
-			) {
-				// S'il y a un bloc ou une echelle en dessous, ne chute pas
 				if (
-					(objPerso.objetAutour.objEnBas.strType == "b" ||
-						objPerso.objetAutour.objEnBas.strType == "e") &&
-					objPerso.intPosYActuel ==
-					objPerso.objetAutour.objEnBas.intY - intHauteurCellule
+					objPerso.binSurBarre &&
+					objPerso.binMovBas &&
+					objPerso.objetAutour.objEnBas.strType != "e"
 				) {
-					objPerso.binEnChute = false;
-				}
-				// S'il peut continuer a chuter, augmentes sa position en Y
-				else {
+					// Le mettre en chute
 					objPerso.binEnChute = true;
-					objPerso.intPosYActuel += objPerso.intVitesse;
-					objPerso.binMovDroite = false;
-					objPerso.binMovGauche = false;
-					objPerso.binMovHaut = false;
 				}
-			}
 
-			//S'il y a une barre de franchissement autour du perso
-			if (
-				objPerso.objetAutour.objAPosPerso.strType == "f" &&
-				objPerso.objetAutour.objAPosPerso.intY == objPerso.intPosYActuel
-			) {
-				objPerso.binSurBarre = true;
-			} else {
-				objPerso.binSurBarre = false;
-			}
-			// si on veux se deplace a gauche et on nest pas au extremite du jeu et qu'il ny a pas de bloc et asser de place pour tourner
-			if (
-				objPerso.binMovGauche &&
-				objPerso.intPosXActuel >= -5 &&
-				!(
-					objPerso.objetAutour.objAGauche.strType == "b" &&
-					objPerso.intPosXActuel - intLongueurCellule ==
-					objPerso.objetAutour.objAGauche.intX
-				)
-			) {
-				objPerso.intScaleX = -1;
-				// S'il n'y a pas dechelle ou de brique, on ce deplace a droite
 				if (
-					!(
-						objPerso.binSurEchelle == true &&
-						objPerso.objetAutour.objEnHautAGauche.strType == "b"
-					)
+					(((objPerso.objetAutour.objEnBas.strType == " " ||
+						objPerso.objetAutour.objEnBas.strType == "f" ||
+						objPerso.objetAutour.objEnBas.strType == "o") &&
+						((objPerso.intPosXActuel >=
+							objPerso.objetAutour.objAPosPerso.intX &&
+							objPerso.intScaleX == 1) ||
+							(objPerso.intPosXActuel <=
+								objPerso.objetAutour.objAPosPerso.intX &&
+								objPerso.intScaleX == -1)) &&
+						!objPerso.binSurBarre) ||
+						objPerso.binEnChute) &&
+					!objPerso.binDansTrou
 				) {
-					objPerso.intPosXActuel -= objPerso.intVitesse;
-					objPerso.binSurEchelle = false;
+					// S'il y a un bloc ou une echelle en dessous, ne chute pas
+					if (
+						(objPerso.objetAutour.objEnBas.strType == "b" ||
+							objPerso.objetAutour.objEnBas.strType == "e") &&
+						objPerso.intPosYActuel ==
+						objPerso.objetAutour.objEnBas.intY - intHauteurCellule
+					) {
+						objPerso.binEnChute = false;
+					}
+					// S'il peut continuer a chuter, augmentes sa position en Y
+					else {
+						objPerso.binEnChute = true;
+						objPerso.intPosYActuel += objPerso.intVitesse;
+						objPerso.binMovDroite = false;
+						objPerso.binMovGauche = false;
+						objPerso.binMovHaut = false;
+					}
 				}
-				// Si il y a un barre en haut a gauche et que le perso n'est pas trop haut
+
+				//S'il y a une barre de franchissement autour du perso
 				if (
-					objPerso.objetAutour.objEnHautAGauche.strType == "f" &&
-					objPerso.intPosYActuel <=
-					objPerso.objetAutour.objAPosPerso.intY +
-					(3 * intHauteurCellule) / 4
+					objPerso.objetAutour.objAPosPerso.strType == "f" &&
+					objPerso.objetAutour.objAPosPerso.intY == objPerso.intPosYActuel
 				) {
-					objPerso.intPosYActuel =
-						objPerso.objetAutour.objEnHautAGauche.intY + intHauteurCellule;
-				}
-			}
-			// Si le perso veux se deplace vers la droite et qu'il peux se deplacer, on le tourne de cote
-			else if (
-				objPerso.binMovDroite &&
-				objPerso.intPosXActuel + intLongueurCellule <= objCanvas.width + 10 &&
-				!(
-					objPerso.objetAutour.objADroite.strType == "b" &&
-					objPerso.intPosXActuel - intLongueurCellule / 2 <
-					objPerso.objetAutour.objADroite.intX + intLongueurCellule
-				)
-			) {
-				objPerso.intScaleX = 1;
-				// si le perso n'est pas sur une echelle et qu'il n'y a pas de bloque en haut a droite
-				// il peu bouger vers la gauche
-				if (
-					!(
-						objPerso.binSurEchelle == true &&
-						objPerso.objetAutour.objEnHautADroite.strType == "b"
-					)
-				) {
-					objPerso.intPosXActuel += objPerso.intVitesse;
-					objPerso.binSurEchelle = false;
-				}
-			}
-			// Si le perso veux ce deplace vers le haut
-			else if (objPerso.binMovHaut) {
-				// Si il y a une echelle autour, accroche le au centre de l'echelle
-				if (
-					objPerso.objetAutour.objAPosPerso.strType == "e" ||
-					objPerso.objetAutour.objAPosPerso.strType == " " ||
-					(objPerso.objetAutour.objAPosPerso.strType == "f" &&
-						objPerso.objetAutour.objEnBas.strType == "e")
-				) {
-					objPerso.intPosXActuel = objPerso.objetAutour.objAPosPerso.intX;
-					objPerso.intPosYActuel -= objPerso.intVitesse;
-					objPerso.binSurEchelle = true;
-				}
-				// S'il n'y a pas dechelle pour s'acrocher
-				else {
-					objPerso.binSurEchelle = false;
-					objPerso.intPosYActuel = objPerso.objetAutour.objAPosPerso.intY;
-				}
-			}
-			// Si le perso veux ce deplace vers le bas
-			else if (objPerso.binMovBas) {
-				// S'il est sur une echelle et qu'il y a une brique en dessous et qu'il peu encore descendre ou
-				// s'il y a une echelle en dessous
-				if (
-					(objPerso.objetAutour.objAPosPerso.strType == "e" &&
-						objPerso.objetAutour.objEnBas.strType == "b" &&
-						objPerso.intPosYActuel + intHauteurCellule <
-						objPerso.objetAutour.objEnBas.intY) ||
-					objPerso.objetAutour.objEnBas.strType == "e"
-				) {
-					objPerso.intPosXActuel = objPerso.objetAutour.objAPosPerso.intX;
-					objPerso.intPosYActuel += objPerso.intVitesse;
-					objPerso.binSurEchelle = true;
+					objPerso.binSurBarre = true;
 				} else {
-					objPerso.binSurEchelle = false;
-					objPerso.binMovBas = false;
+					objPerso.binSurBarre = false;
+				}
+				// si on veux se deplace a gauche et on nest pas au extremite du jeu et qu'il ny a pas de bloc et asser de place pour tourner
+				if (
+					objPerso.binMovGauche &&
+					objPerso.intPosXActuel >= -5 &&
+					!(
+						objPerso.objetAutour.objAGauche.strType == "b" &&
+						objPerso.intPosXActuel - intLongueurCellule ==
+						objPerso.objetAutour.objAGauche.intX
+					)
+				) {
+					objPerso.intScaleX = -1;
+					// S'il n'y a pas dechelle ou de brique, on ce deplace a droite
+					if (
+						!(
+							objPerso.binSurEchelle == true &&
+							objPerso.objetAutour.objEnHautAGauche.strType == "b"
+						)
+					) {
+						objPerso.intPosXActuel -= objPerso.intVitesse;
+						objPerso.binSurEchelle = false;
+					}
+					// Si il y a un barre en haut a gauche et que le perso n'est pas trop haut
+					if (
+						objPerso.objetAutour.objEnHautAGauche.strType == "f" &&
+						objPerso.intPosYActuel <=
+						objPerso.objetAutour.objAPosPerso.intY +
+						(3 * intHauteurCellule) / 4
+					) {
+						objPerso.intPosYActuel =
+							objPerso.objetAutour.objEnHautAGauche.intY + intHauteurCellule;
+					}
+				}
+				// Si le perso veux se deplace vers la droite et qu'il peux se deplacer, on le tourne de cote
+				else if (
+					objPerso.binMovDroite &&
+					objPerso.intPosXActuel + intLongueurCellule <= objCanvas.width + 10 &&
+					!(
+						objPerso.objetAutour.objADroite.strType == "b" &&
+						objPerso.intPosXActuel - intLongueurCellule / 2 <
+						objPerso.objetAutour.objADroite.intX + intLongueurCellule
+					)
+				) {
+					objPerso.intScaleX = 1;
+					// si le perso n'est pas sur une echelle et qu'il n'y a pas de bloque en haut a droite
+					// il peu bouger vers la gauche
+					if (
+						!(
+							objPerso.binSurEchelle == true &&
+							objPerso.objetAutour.objEnHautADroite.strType == "b"
+						)
+					) {
+						objPerso.intPosXActuel += objPerso.intVitesse;
+						objPerso.binSurEchelle = false;
+					}
+				}
+				// Si le perso veux ce deplace vers le haut
+				else if (objPerso.binMovHaut) {
+					// Si il y a une echelle autour, accroche le au centre de l'echelle
+					if (
+						objPerso.objetAutour.objAPosPerso.strType == "e" ||
+						objPerso.objetAutour.objAPosPerso.strType == " " ||
+						(objPerso.objetAutour.objAPosPerso.strType == "f" &&
+							objPerso.objetAutour.objEnBas.strType == "e")
+					) {
+						objPerso.intPosXActuel = objPerso.objetAutour.objAPosPerso.intX;
+						objPerso.intPosYActuel -= objPerso.intVitesse;
+						objPerso.binSurEchelle = true;
+					}
+					// S'il n'y a pas dechelle pour s'acrocher
+					else {
+						objPerso.binSurEchelle = false;
+						objPerso.intPosYActuel = objPerso.objetAutour.objAPosPerso.intY;
+					}
+				}
+				// Si le perso veux ce deplace vers le bas
+				else if (objPerso.binMovBas) {
+					// S'il est sur une echelle et qu'il y a une brique en dessous et qu'il peu encore descendre ou
+					// s'il y a une echelle en dessous
+					if (
+						(objPerso.objetAutour.objAPosPerso.strType == "e" &&
+							objPerso.objetAutour.objEnBas.strType == "b" &&
+							objPerso.intPosYActuel + intHauteurCellule <
+							objPerso.objetAutour.objEnBas.intY) ||
+						objPerso.objetAutour.objEnBas.strType == "e"
+					) {
+						objPerso.intPosXActuel = objPerso.objetAutour.objAPosPerso.intX;
+						objPerso.intPosYActuel += objPerso.intVitesse;
+						objPerso.binSurEchelle = true;
+					} else {
+						objPerso.binSurEchelle = false;
+						objPerso.binMovBas = false;
+					}
 				}
 			}
 		};
@@ -1455,7 +1548,13 @@
 					objLodeRunner.intVitesse ==
 					objGarde.intPosYActuel
 				) {
-					console.log("Game Over");
+					if (intNbVieNiveau != 1){
+						recommencerNiveau();
+					}
+					else {
+						alert("Game Over!")
+						arreterAnimation();
+					}
 					objGarde.binMovDroite = false;
 					objGarde.binMovGauche = false;
 					objGarde.binMovHaut = false;
