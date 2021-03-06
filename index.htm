@@ -37,6 +37,7 @@
 		let intScoreNiveau = 0
 		let intNbVieNiveau = 5;
 		let binDemarrer = false;
+		let binGameOver = false;
 
 		let objLodeRunner = null
 		let objGarde = null
@@ -346,6 +347,8 @@
 			dessinerBrique();
 			dessinerPierres();
 			dessinerBarreInfo();
+			if (binGameOver)
+				dessinerGameOver();
 		};
 
 		const initObjPierre = () =>{
@@ -494,6 +497,20 @@
 				}
 			}
 		};
+
+		const dessinerGameOver = () =>{
+				objC2D.save();
+				objC2D.translate(objCanvas.width/2, intHauteurCanvasJeu/2);
+
+				objC2D.fillStyle = "yellow";
+				objC2D.strokeStyle = "white";
+				objC2D.font = "100px Arial";
+				objC2D.textBaseline = "middle";
+				objC2D.textAlign = "center";
+				objC2D.strokeText("Game Over!", 0,0);
+				objC2D.fillText("Game Over!", 0,0);
+				objC2D.restore();
+		}
 
 		const dessinerEchelle = () => {
 			objC2D.save();
@@ -1015,7 +1032,7 @@
 						recommencerNiveau();
 					}
 					else {
-						alert("Game Over!")
+						binGameOver = true;
 						arreterAnimation();
 					}
 				}
@@ -1552,7 +1569,7 @@
 						recommencerNiveau();
 					}
 					else {
-						alert("Game Over!")
+						binGameOver = true;
 						arreterAnimation();
 					}
 					objGarde.binMovDroite = false;
