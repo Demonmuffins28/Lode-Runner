@@ -1467,26 +1467,18 @@
 			const comparerPositionDesGardes = () => {
 				let binGardeTrouve = false
 				for (let i = 0; i < tObjetsGarde.length; i++) {
-					for (let j = 0; j < tObjetsGarde.length && !binGardeTrouve; j++) {
+					for (let j = 0; j < tObjetsGarde.length; j++) {
 						if (tObjetsGarde[i] != tObjetsGarde[j]) {
 							// Si le garde est sur la meme etage
 							if (tObjetsGarde[i].intPosYActuel == tObjetsGarde[j].intPosYActuel) {
-								// si le garde nest pas le meme quon compare
 								let intDistanceEntreGarde =
 									tObjetsGarde[i].intPosXActuel - tObjetsGarde[j].intPosXActuel
-								console.log(
-									tObjetsGarde[i].strCouleur +
-										", " +
-										tObjetsGarde[j].strCouleur +
-										", " +
-										intDistanceEntreGarde
-								)
 								if (Math.abs(intDistanceEntreGarde) <= intLongueurCellule * 2) {
-									if (intDistanceEntreGarde < 0) {
+									if (intDistanceEntreGarde <= 0) {
 										tObjetsGarde[i].binMovGauche = true
 									} else tObjetsGarde[i].binMovDroite = true
-									binGardeTrouve = true
 								}
+							} else if (tObjetsGarde[i].intPosXActuel == tObjetsGarde[j].intPosXActuel) {
 							}
 						}
 					}
@@ -1638,11 +1630,6 @@
 						objGarde.binMovBas = false
 					}
 				}
-				console.log(
-					objGarde.intPosYActuel +
-						" " +
-						(objLodeRunner.intPosYActuel - intHauteurCellule + objLodeRunner.intVitesse)
-				)
 			}
 		</script>
 	</head>
