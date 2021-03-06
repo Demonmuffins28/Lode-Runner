@@ -1260,7 +1260,7 @@
 							tTableauDeJeu[objPerso.tPosTrou[1] / intHauteurCellule][
 								objPerso.tPosTrou[0] / intLongueurCellule
 							] = " "
-							if (objPerso.intScaleX == 1) {
+							if (objLodeRunner.intPosXActuel - (objLodeRunner.intPosXActuel + intLongueurCellule / 2) >0) {
 								objPerso.intPosXActuel = objPerso.objetAutour.objEnHautADroite.intX - 15
 								objPerso.intPosYActuel =
 									objPerso.objetAutour.objEnHautADroite.intY - objPerso.intVitesse
