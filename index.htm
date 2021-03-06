@@ -1284,7 +1284,9 @@
 								objPerso.objetAutour.objADroite.strType == " " &&
 								objPerso.objetAutour.objEnBasADroite.strType == "b" &&
 								objPerso.objetAutour.objAPosPerso.strType == " " &&
-								objPerso.binMovGauche
+								objPerso.binMovGauche &&
+								(objPerso.objetAutour.objEnBas.strType != "e" ||
+									objPerso.objetAutour.objEnBas.strType != "f")
 							) {
 								objOr.tPos.push({
 									x: objPerso.objetAutour.objADroite.intX,
@@ -1297,7 +1299,10 @@
 								objPerso.objetAutour.objAGauche.strType == " " &&
 								objPerso.objetAutour.objEnBasAGauche.strType == "b" &&
 								objPerso.objetAutour.objAPosPerso.strType == " " &&
-								objPerso.binMovDroite
+								objPerso.binMovDroite &&
+								objPerso.objetAutour.objEnBas.strType != "e" &&
+								objPerso.objetAutour.objAPosPerso.strType != "e" &&
+								objPerso.objetAutour.objEnBas.strType != "f"
 							) {
 								objOr.tPos.push({
 									x: objPerso.objetAutour.objAGauche.intX,
@@ -1311,14 +1316,14 @@
 						}
 					}
 
-					if (
-						objPerso.binSurBarre &&
-						objPerso.binMovBas &&
-						objPerso.objetAutour.objEnBas.strType != "e"
-					) {
-						// Le mettre en chute
-						objPerso.binEnChute = true
-					}
+					// if (
+					// 	objPerso.binSurBarre &&
+					// 	objPerso.binMovBas &&
+					// 	objPerso.objetAutour.objEnBas.strType != "e"
+					// ) {
+					// 	// Le mettre en chute
+					// 	objPerso.binEnChute = true
+					// }
 
 					if (
 						(((objPerso.objetAutour.objEnBas.strType == " " ||
@@ -1353,7 +1358,7 @@
 					//S'il y a une barre de franchissement autour du perso
 					if (
 						objPerso.objetAutour.objAPosPerso.strType == "f" &&
-						objPerso.objetAutour.objAPosPerso.intY == objPerso.intPosYActuel
+						objPerso.objetAutour.objAPosPerso.intY - objPerso.intPosYActuel < 10
 					) {
 						objPerso.binSurBarre = true
 						objPerso.binEnChute = false
