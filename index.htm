@@ -33,7 +33,7 @@
 			let strTempsNiveau = "00:00"
 
 			const intVitesse = 2.5
-			let intNiveau = 1
+			let intNiveau = 10
 			let intScoreNiveau = 0
 			let intNbVieNiveau = 5
 			let binDemarrer = false
@@ -50,12 +50,15 @@
 				"blue",
 				"green",
 				"yellow",
-				"purple",
+				"MediumPurple",
 				"orange",
 				"violet",
 				"pink",
 				"lime",
-				"brown",
+				"#C71585",
+				"teal",
+				"#CD5C5C",
+				"OliveDrab",
 			]
 
 			const initAnimation = () => {
@@ -1479,6 +1482,13 @@
 									} else tObjetsGarde[i].binMovDroite = true
 								}
 							} else if (tObjetsGarde[i].intPosXActuel == tObjetsGarde[j].intPosXActuel) {
+								let intDistanceEntreGarde =
+									tObjetsGarde[i].intPosYActuel - tObjetsGarde[j].intPosYActuel
+								if (Math.abs(intDistanceEntreGarde) <= intHauteurCellule * 2) {
+									if (intDistanceEntreGarde <= 0) {
+										tObjetsGarde[i].binMovHaut = true
+									} else tObjetsGarde[i].binMovBas = true
+								}
 							}
 						}
 					}
@@ -1487,35 +1497,37 @@
 
 			const algorithmeGarde = () => {
 				for (let i = 0; i < tObjetsGarde.length; i++) {
-					let objGarde = tObjetsGarde[i]
-					mettreAJourAnimPerso(objGarde)
+					let objGardeActuel = tObjetsGarde[i]
+					mettreAJourAnimPerso(objGardeActuel)
 
 					// Si le garde est au meme etage que lodeRunner
 					if (
 						objLodeRunner.intPosYActuel - intHauteurCellule + objLodeRunner.intVitesse ==
-						objGarde.intPosYActuel
+						objGardeActuel.intPosYActuel
 					) {
 						// Va a droite si la position du garde est plus petite que celle de lode runner
 						if (
-							objLodeRunner.intPosXActuel - (objGarde.intPosXActuel + intLongueurCellule / 2) >
+							objLodeRunner.intPosXActuel -
+								(objGardeActuel.intPosXActuel + intLongueurCellule / 2) >
 							0
 						) {
-							objGarde.binSurEchelle = false
-							objGarde.binMovGauche = false
-							objGarde.binMovHaut = false
-							objGarde.binMovBas = false
-							objGarde.binMovDroite = true
+							objGardeActuel.binSurEchelle = false
+							objGardeActuel.binMovGauche = false
+							objGardeActuel.binMovHaut = false
+							objGardeActuel.binMovBas = false
+							objGardeActuel.binMovDroite = true
 						}
 						// Va a gauche si la position du garde est plus grande que celle de lode runner
 						else if (
-							objLodeRunner.intPosXActuel - (objGarde.intPosXActuel + intLongueurCellule / 2) <
+							objLodeRunner.intPosXActuel -
+								(objGardeActuel.intPosXActuel + intLongueurCellule / 2) <
 							0
 						) {
-							objGarde.binSurEchelle = false
-							objGarde.binMovDroite = false
-							objGarde.binMovHaut = false
-							objGarde.binMovBas = false
-							objGarde.binMovGauche = true
+							objGardeActuel.binSurEchelle = false
+							objGardeActuel.binMovDroite = false
+							objGardeActuel.binMovHaut = false
+							objGardeActuel.binMovBas = false
+							objGardeActuel.binMovGauche = true
 						}
 					} else if (
 						/*  Si on est pas sur le meme etage que lode runner
@@ -1524,97 +1536,97 @@
 											Si on ne peux pas monter descendre lechelle on monte
 									*/
 						objLodeRunner.intPosYActuel - intHauteurCellule + objLodeRunner.intVitesse !=
-						objGarde.intPosYActuel
+						objGardeActuel.intPosYActuel
 					) {
 						// Si on n'est pas en mouvement
 						if (
-							!objGarde.binMovDroite &&
-							!objGarde.binMovGauche &&
-							!objGarde.binEnChute &&
-							!objGarde.binSurEchelle //&&
+							!objGardeActuel.binMovDroite &&
+							!objGardeActuel.binMovGauche &&
+							!objGardeActuel.binEnChute &&
+							!objGardeActuel.binSurEchelle //&&
 							//objGarde1.objetAutour.objAPosPerso.strType != "e"
 						) {
 							let intRanMovement = Math.floor(Math.random() * 2)
 							if (intRanMovement == 0) {
-								objGarde.binMovGauche = true
+								objGardeActuel.binMovGauche = true
 							} else {
-								objGarde.binMovDroite = true
+								objGardeActuel.binMovDroite = true
 							}
 						}
 						// Si on est en mouvement
 						else {
 							// Si on est contre un mur a droite
 							if (
-								((objGarde.objetAutour.objADroite.strType == "b" &&
-									objGarde.intPosXActuel + intLongueurCellule ==
-										objGarde.objetAutour.objADroite.intX) ||
+								((objGardeActuel.objetAutour.objADroite.strType == "b" &&
+									objGardeActuel.intPosXActuel + intLongueurCellule ==
+										objGardeActuel.objetAutour.objADroite.intX) ||
 									objGarde.intPosXActuel + intLongueurCellule == objCanvas.width + 10) &&
-								!objGarde.binMovHaut &&
-								!objGarde.binMovBas
+								!objGardeActuel.binMovHaut &&
+								!objGardeActuel.binMovBas
 							) {
-								objGarde.binMovGauche = true
-								objGarde.binMovDroite = false
+								objGardeActuel.binMovGauche = true
+								objGardeActuel.binMovDroite = false
 							}
 							// si on est contre un mur a gauche
 							else if (
-								((objGarde.objetAutour.objAGauche.strType == "b" &&
-									objGarde.intPosXActuel ==
-										objGarde.objetAutour.objAGauche.intX + intLongueurCellule) ||
-									objGarde.intPosXActuel == 0) &&
-								!objGarde.binMovHaut &&
-								!objGarde.binMovBas
+								((objGardeActuel.objetAutour.objAGauche.strType == "b" &&
+									objGardeActuel.intPosXActuel ==
+										objGardeActuel.objetAutour.objAGauche.intX + intLongueurCellule) ||
+									objGardeActuel.intPosXActuel == 0) &&
+								!objGardeActuel.binMovHaut &&
+								!objGardeActuel.binMovBas
 							) {
-								objGarde.binMovDroite = true
-								objGarde.binMovGauche = false
+								objGardeActuel.binMovDroite = true
+								objGardeActuel.binMovGauche = false
 							}
 							// Si il y a une echelle a la position ou en dessous du garde
 							else if (
-								objGarde.objetAutour.objAPosPerso.strType == "e" ||
-								objGarde.objetAutour.objEnBas.strType == "e"
+								objGardeActuel.objetAutour.objAPosPerso.strType == "e" ||
+								objGardeActuel.objetAutour.objEnBas.strType == "e"
 							) {
 								// Si le garde est en haut du lode runner et qu'il y a une echelle en dessous
 								if (
 									objLodeRunner.intPosYActuel - intHauteurCellule + objLodeRunner.intVitesse >
-										objGarde.intPosYActuel &&
-									objGarde.objetAutour.objEnBas.strType == "e"
+										objGardeActuel.intPosYActuel &&
+									objGardeActuel.objetAutour.objEnBas.strType == "e"
 								) {
-									if (objGarde.objetAutour.objEnBas.strType == "e") {
-										objGarde.binMovBas = true
-										objGarde.binMovGauche = false
-										objGarde.binMovDroite = false
+									if (objGardeActuel.objetAutour.objEnBas.strType == "e") {
+										objGardeActuel.binMovBas = true
+										objGardeActuel.binMovGauche = false
+										objGardeActuel.binMovDroite = false
 									}
 								}
 								// si on est plus bas que le lode runner et qu'il y a une echelle pour monter
 								else if (
 									objLodeRunner.intPosYActuel - intHauteurCellule + objLodeRunner.intVitesse <
-										objGarde.intPosYActuel &&
-									objGarde.objetAutour.objAPosPerso.strType == "e"
+										objGardeActuel.intPosYActuel &&
+									objGardeActuel.objetAutour.objAPosPerso.strType == "e"
 								) {
-									objGarde.binMovHaut = true
-									objGarde.binMovGauche = false
-									objGarde.binMovDroite = false
+									objGardeActuel.binMovHaut = true
+									objGardeActuel.binMovGauche = false
+									objGardeActuel.binMovDroite = false
 								}
 								// TEST
 								else {
-									objGarde.binSurEchelle = false
+									objGardeActuel.binSurEchelle = false
 								}
 							}
 						}
 					}
 
 					// Bug reparer quand arrive en haut de l'echelle gauche
-					if (objGarde.intPosYActuel <= 40) {
-						objGarde.intPosYActuel = intHauteurCellule
-						objGarde.binMovHaut = false
+					if (objGardeActuel.intPosYActuel <= 40) {
+						objGardeActuel.intPosYActuel = intHauteurCellule
+						objGardeActuel.binMovHaut = false
 					}
 
 					// Si on attrape lode runner
 					if (
-						objLodeRunner.intPosXActuel - objGarde.intPosXActuel <= intLongueurCellule &&
-						objLodeRunner.intPosXActuel - objGarde.intPosXActuel >= 0 &&
-						objGarde.intPosYActuel <=
+						objLodeRunner.intPosXActuel - objGardeActuel.intPosXActuel <= intLongueurCellule &&
+						objLodeRunner.intPosXActuel - objGardeActuel.intPosXActuel >= 0 &&
+						objGardeActuel.intPosYActuel <=
 							objLodeRunner.intPosYActuel - intHauteurCellule + objLodeRunner.intVitesse &&
-						objGarde.intPosYActuel + intHauteurCellule - objLodeRunner.intVitesse >=
+						objGardeActuel.intPosYActuel + intHauteurCellule - objLodeRunner.intVitesse >=
 							objLodeRunner.intPosYActuel - intHauteurCellule + objLodeRunner.intVitesse
 					) {
 						if (intNbVieNiveau != 1) {
@@ -1624,10 +1636,10 @@
 							objSons.gameOver.play()
 							arreterAnimation()
 						}
-						objGarde.binMovDroite = false
-						objGarde.binMovGauche = false
-						objGarde.binMovHaut = false
-						objGarde.binMovBas = false
+						objGardeActuel.binMovDroite = false
+						objGardeActuel.binMovGauche = false
+						objGardeActuel.binMovHaut = false
+						objGardeActuel.binMovBas = false
 					}
 				}
 			}
