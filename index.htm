@@ -33,7 +33,7 @@
 			let strTempsNiveau = "00:00"
 
 			const intVitesse = 2.5
-			let intNiveau = -1
+			let intNiveau = 1
 			let intScoreNiveau = 0
 			let intNbVieNiveau = 5
 			let binDemarrer = false
@@ -1283,6 +1283,7 @@
 						}
 					}
 
+					// Echapper coffre random
 					if (objPerso.binPossedeOr) {
 						let intNbrRandom1 = Math.floor(Math.random() * 500)
 						let intNbrRandom2 = Math.floor(Math.random() * 500)
@@ -1298,7 +1299,11 @@
 								objPerso.objetAutour.objADroite.strType == " " &&
 								objPerso.objetAutour.objEnBasADroite.strType == "b" &&
 								objPerso.objetAutour.objAPosPerso.strType == " " &&
-								objPerso.binMovGauche
+								objPerso.binMovGauche &&
+								objPerso.objetAutour.objEnBasADroite.strType != "e" &&
+								objPerso.objetAutour.objEnBasADroite.strType != "f" &&
+								objPerso.objetAutour.objADroite.strType != "e" &&
+								objPerso.objetAutour.objADroite.strType != "f"
 							) {
 								objOr.tPos.push({
 									x: objPerso.objetAutour.objADroite.intX,
@@ -1311,7 +1316,11 @@
 								objPerso.objetAutour.objAGauche.strType == " " &&
 								objPerso.objetAutour.objEnBasAGauche.strType == "b" &&
 								objPerso.objetAutour.objAPosPerso.strType == " " &&
-								objPerso.binMovDroite
+								objPerso.binMovDroite &&
+								objPerso.objetAutour.objEnBasAGauche.strType != "e" &&
+								objPerso.objetAutour.objEnBasAGauche.strType != "f" &&
+								objPerso.objetAutour.objAGauche.strType != "e" &&
+								objPerso.objetAutour.objAGauche.strType != "f"
 							) {
 								objOr.tPos.push({
 									x: objPerso.objetAutour.objAGauche.intX,
@@ -1630,6 +1639,11 @@
 									}
 								} else binForcerGarde = false
 							}
+						}
+
+						if (objGardeActuel.intPosYActuel <= 40) {
+							objGardeActuel.intPosYActuel = intHauteurCellule
+							objGardeActuel.binMovHaut = false
 						}
 
 						// Bug reparer quand arrive en haut de l'echelle gauche
