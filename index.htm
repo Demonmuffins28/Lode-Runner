@@ -384,9 +384,9 @@
 					}
 					mettreAJourTemps()
 					mettreAJourAnimationLodeRunner()
+					mettreAJourObjBrique()
 					comparerPositionDesGardes()
 					algorithmeGarde()
-					mettreAJourObjBrique()
 				}
 			}
 
@@ -1201,6 +1201,7 @@
 			const mettreAJourAnimPerso = (objPerso) => {
 				if (binDemarrer) {
 					trouverObjetAutourPerso(objPerso)
+					
 
 					if (objPerso.objetAutour.objAPosPerso.strType == "o" && !objPerso.binPossedeOr) {
 						for (i = 0; i < objOr.tPos.length; i++) {
@@ -1216,7 +1217,6 @@
 							}
 						}
 					}
-
 					if (objPerso.objetAutour.objAPosPerso.strType == " " && !objPerso.binDansTrou) {
 						for (i = 0; i < objBrique.tPos.length; i++) {
 							if (
@@ -1268,11 +1268,11 @@
 								objLodeRunner.intPosXActuel - (objPerso.intPosXActuel + intLongueurCellule / 2) >
 								0
 							) {
-								objPerso.intPosXActuel = objPerso.objetAutour.objEnHautADroite.intX - 15
+								objPerso.intPosXActuel = objPerso.objetAutour.objEnHautADroite.intX
 								objPerso.intPosYActuel =
 									objPerso.objetAutour.objEnHautADroite.intY - objPerso.intVitesse
 							} else {
-								objPerso.intPosXActuel = objPerso.objetAutour.objEnHautAGauche.intX + 15
+								objPerso.intPosXActuel = objPerso.objetAutour.objEnHautAGauche.intX
 								objPerso.intPosYActuel =
 									objPerso.objetAutour.objEnHautAGauche.intY - objPerso.intVitesse
 							}
@@ -1312,6 +1312,7 @@
 								tTableauDeJeu[objPerso.objetAutour.objADroite.intY / intHauteurCellule][
 									objPerso.objetAutour.objADroite.intX / intLongueurCellule
 								] = "o"
+								objPerso.binPossedeOr = false
 							} else if (
 								objPerso.objetAutour.objAGauche.strType == " " &&
 								objPerso.objetAutour.objEnBasAGauche.strType == "b" &&
@@ -1329,8 +1330,8 @@
 								tTableauDeJeu[objPerso.objetAutour.objAGauche.intY / intHauteurCellule][
 									objPerso.objetAutour.objAGauche.intX / intLongueurCellule
 								] = "o"
+								objPerso.binPossedeOr = false
 							}
-							objPerso.binPossedeOr = false
 						}
 					}
 
@@ -1371,6 +1372,10 @@
 							objPerso.binMovGauche = false
 							objPerso.binMovHaut = false
 						}
+					}
+					intY = Math.floor(objPerso.intPosYActuel / intHauteurCellule)
+					if (intY >= 16){
+						objPerso.intPosYActuel = 560
 					}
 
 					//S'il y a une barre de franchissement autour du perso
@@ -1440,11 +1445,11 @@
 					else if (objPerso.binMovHaut) {
 						// Si il y a une echelle autour, accroche le au centre de l'echelle
 						if (
-							objPerso.objetAutour.objAPosPerso.strType == "e" ||
+							(objPerso.objetAutour.objAPosPerso.strType == "e" ||
 							objPerso.objetAutour.objAPosPerso.strType == " " ||
 							(objPerso.objetAutour.objAPosPerso.strType == "f" &&
 								objPerso.objetAutour.objEnBas.strType == "e" &&
-								objPerso.objetAutour.objEnHaut.strType != "b")
+								objPerso.objetAutour.objEnHaut.strType != "b" ))&& objPerso.intPosYActuel >40
 						) {
 							objPerso.intPosXActuel = objPerso.objetAutour.objAPosPerso.intX
 							objPerso.intPosYActuel -= objPerso.intVitesse
@@ -1641,12 +1646,6 @@
 							}
 						}
 
-						if (objGardeActuel.intPosYActuel <= 40) {
-							objGardeActuel.intPosYActuel = intHauteurCellule
-							objGardeActuel.binMovHaut = false
-						}
-
-						// Bug reparer quand arrive en haut de l'echelle gauche
 						if (objGardeActuel.intPosYActuel <= 40) {
 							objGardeActuel.intPosYActuel = intHauteurCellule
 							objGardeActuel.binMovHaut = false
